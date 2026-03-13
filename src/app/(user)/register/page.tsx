@@ -1,16 +1,27 @@
-import RegisterForm from "./RegisterForm";
+import RegesterForm from "./regesterForm";
 
-const RegisterPage = () => {
+export const metadata = {
+  title: "Register",
+  description:
+    "Create a new account to access your profile, bookmarks, and personalized content on our platform.",
+  openGraph: {
+    title: "Register",
+    description:
+      "Sign up to start reading, bookmarking, and interacting with articles on our platform.",
+    images: ["/public/next.svg"],
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+export default function Regester() {
   return (
-    <section className="fix-height container m-auto px-7 flex items-center justify-center">
-      <div className="m-auto bg-white rounded-lg p-5 w-full md:w-2/3">
-        <h1 className="text-3xl font-bold text-gray-800 mb-5">
-          Create New Account
-        </h1>
-        <RegisterForm />
+    <div className="login flex items-center justify-center h-screen p-2">
+      <div className="w-9/12  border shadow-2xl p-3">
+        <RegesterForm />
       </div>
-    </section>
-  )
+    </div>
+  );
 }
-
-export default RegisterPage

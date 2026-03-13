@@ -4,7 +4,7 @@ import { verifyToken } from "@/utils/verifyToken";
 import { UpdateCommentDto } from '@/utils/dtos';
 
 interface Props {
-    params: { id: string };
+   params: Promise<{ id: string }> 
 }
 
 /**
@@ -15,7 +15,9 @@ interface Props {
  */
 export async function PUT(request: NextRequest, { params }: Props) {
     try {
-        const comment = await prisma.comment.findUnique({ where: { id: parseInt(params.id) } });
+          const { id } = await params
+
+        const comment = await prisma.comment.findUnique({ where: { id: parseInt(id) } });
         if (!comment) {
             return NextResponse.json({ message: 'comment not found' }, { status: 404 });
         }
@@ -30,7 +32,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
 
         const body = await request.json() as UpdateCommentDto;
         const updatedComment = await prisma.comment.update({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
             data: { text: body.text }
         });
 
@@ -50,11 +52,12 @@ export async function PUT(request: NextRequest, { params }: Props) {
  *  @desc    Delete Comment
  *  @access  private (only admin OR owner of the comment)
  */
-export async function DELETE(request: NextRequest, { params }: Props) {
+export async function DELETE(request: NextRequest,  { params }: { params: Promise<{ id: string }> }) {
     try {
-        const comment = await prisma.comment.findUnique({ where: { id: parseInt(params.id) } });
+          const { id } = await params
+        const comment = await prisma.comment.findUnique({ where: { id: parseInt(id) } });
         if (!comment) {
-            return NextResponse.json({ message: 'comment not found' }, { status: 404 });
+            return NextResponse.json({  message: 'comment not found' }, { status: 404 });
         }
 
         const user = verifyToken(request);
@@ -66,7 +69,7 @@ export async function DELETE(request: NextRequest, { params }: Props) {
         }
 
         if (user.isAdmin || user.id === comment.userId) {
-            await prisma.comment.delete({ where: { id: parseInt(params.id) } });
+            await prisma.comment.delete({ where: { id: parseInt(id) } });
             return NextResponse.json(
                 { message: 'comment deleted' },
                 { status: 200 }

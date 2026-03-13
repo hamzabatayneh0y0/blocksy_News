@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 import { updateUserSchema } from '@/utils/validationSchemas';
 
 interface Props {
-    params: { id: string };
+     params: Promise<{ id: string; }>; 
 }
 
 /**
@@ -16,9 +16,11 @@ interface Props {
  *  @access  private (only user himself can delete his account)
  */
 export async function DELETE(request: NextRequest, { params }: Props) {
+    const {id}=await params
+
     try {
         const user = await prisma.user.findUnique({ 
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
             include: { comments: true }
         });
         if (!user) {
@@ -31,7 +33,7 @@ export async function DELETE(request: NextRequest, { params }: Props) {
         const userFromToken = verifyToken(request);
         if (userFromToken !== null && userFromToken.id === user.id) {
             // deleting the user
-            await prisma.user.delete({ where: { id: parseInt(params.id) } });
+            await prisma.user.delete({ where: { id: parseInt(id) } });
             return NextResponse.json(
                 { message: 'your profile (account) has been deleted' },
                 { status: 200 }
@@ -59,15 +61,27 @@ export async function DELETE(request: NextRequest, { params }: Props) {
  *  @access  private (only user himself can get his account/profile)
  */
 export async function GET(request: NextRequest, { params }: Props) {
+    const {id}=await params
   try {
     const user = await prisma.user.findUnique({
-        where:{ id: parseInt(params.id) },
+        where:{ id: parseInt(id) },
         select: {
             id: true,
             email: true,
             username: true,
             createdAt: true,
             isAdmin: true,
+            comments:true,
+            articleLikes:{
+                include:{
+                    article:true
+                }
+            },
+            bookmarks:{
+                include:{
+                    article:true
+                }
+            }
         }
     });
 
@@ -101,8 +115,10 @@ export async function GET(request: NextRequest, { params }: Props) {
  *  @access  private (only user himself can update his account/profile)
  */
 export async function PUT(request: NextRequest, { params } : Props) {
+    const {id}=await params
+    
     try {
-        const user = await prisma.user.findUnique({ where: { id: parseInt(params.id) }});
+        const user = await prisma.user.findUnique({ where: { id: parseInt(id) }});
         if(!user) {
             return NextResponse.json({ message: 'user not found' }, { status: 404 });
         }
@@ -129,7 +145,7 @@ export async function PUT(request: NextRequest, { params } : Props) {
            body.password = await bcrypt.hash(body.password, salt); 
         }
         const updatedUser = await prisma.user.update({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
             data: {
                 username: body.username,
                 email: body.email,

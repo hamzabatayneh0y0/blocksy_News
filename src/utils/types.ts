@@ -1,4 +1,4 @@
-import { Article, Comment, User } from "@prisma/client";
+import { Article, Bookmark, Comment, User } from "@prisma/client";
 
 export type JWTPayload = {
     id: number;
@@ -6,6 +6,7 @@ export type JWTPayload = {
     username: string;
 }
 
-export type CommentWithUser = Comment & { user: User };
+export type CommentWithUser = Comment & { user: User,likes:{userId:number}[] };
 
-export type SingleArticle = Article & { comments: CommentWithUser[] };
+export type SingleArticle = Article & { comments: CommentWithUser[] ,bookmarks:{userId:number}[],likes:{userId:number}[]};
+export type NewArticle =Article & {bookmarks:{userId:number}[]}

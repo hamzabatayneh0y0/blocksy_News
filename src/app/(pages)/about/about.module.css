@@ -1,0 +1,17 @@
+.header{
+    background-image: url("../../../../public/images/john-moeses-bauan-EiwfpX6mh1w-unsplash.jpg");
+    height: 500px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.achievements{
+    background-image: url("../../../../public/images/christian-perner-UKLIuV8rAks-unsplash2.jpg");
+     background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #f8f9fb !important;
+}

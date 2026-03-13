@@ -19,6 +19,13 @@ export async function GET(request: NextRequest) {
                         contains: searchText,
                         mode: "insensitive"
                     }
+                },
+                include:{
+                    bookmarks:{
+                        select:{
+                            userId:true
+                        }
+                    }
                 }
             })
         } else {

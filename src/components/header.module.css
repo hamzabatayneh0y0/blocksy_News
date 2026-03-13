@@ -1,0 +1,70 @@
+.pages{
+    cursor: pointer;
+    text-transform: capitalize;
+    position: relative;
+    transition: 300ms;
+}
+
+
+
+.burger{
+    position: relative;
+     height: 20px;
+  width: 20px;
+}
+.burger span {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  top: 50%;
+  margin-top: -1px;
+  left: 0;
+  display: block;
+  background: var(--color-primary);
+  transition: 0.5s;
+}
+.burger span:first-child {
+  top: 3px;
+}
+.burger span:last-child {
+  top: 16px;
+}
+
+.burger:hover {
+  cursor: pointer;
+}
+input:checked + .burger span {
+  opacity: 0;
+  top: 50%;
+}
+input:checked + label span:first-child {
+  opacity: 1;
+  transform: rotate(405deg);
+}
+input:checked + label span:last-child {
+  opacity: 1;
+  transform: rotate(-405deg);
+}
+
+
+ @media (width >= 64rem /* 1024px */) {
+        .pages:hover div{
+     transform: translateY(-70px);
+     visibility: visible;
+}
+    }
+
+     @media (width < 64rem /* 1024px */) {
+        .pages div{
+    max-height: 0;
+    transition: 300ms;
+    /* visibility: hidden; */
+    overflow: hidden;
+    padding: 0;
+}
+        .pages:hover div{
+     max-height: 300px;
+     visibility: visible;
+     padding: 8px 12px;
+}
+    }

@@ -7,9 +7,9 @@ import { cookies } from 'next/headers';
  *  @desc    Logout User
  *  @access  public
  */
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
     try {
-        cookies().delete("jwtToken");
+        (await cookies()).delete("jwtToken");
         return NextResponse.json({ message: 'logout' }, { status: 200 });
     } catch (error) {
         return NextResponse.json(

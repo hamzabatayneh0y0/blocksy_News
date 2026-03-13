@@ -1,29 +1,50 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  --bg-color: #efefef;
+@custom-variant dark (&:where(.dark, .dark *));
+
+
+
+
+input:focus {
+  outline: none;
+}
+textarea:focus {
+  outline: none;
 }
 
-body {
-  background-color: var(--bg-color);
+button{
+  outline:none;
 }
 
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
+
+
+@theme{
+  --color-primary: #0069ff;
+  --color-white: white;
+  --color-black: black;
+  --color-body:#efefef;
+--animate-fadeIn: fadeIn 1s ease-in-out both;
+--animate-fadeOut: fadeOut 1s ease-in-out both;
+
+  @keyframes fadeIn {
+    0%
+  {
+    opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+   @keyframes fadeOut {
+    0%
+  {
+    opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
 }
 
-.fix-height {
-  min-height: calc(100vh - 150px);
-}
-
-.overflow-height {
-  height: calc(100vh - 150px);
-}
-
-button:disabled {
-  cursor: not-allowed;
-}

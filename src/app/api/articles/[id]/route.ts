@@ -4,7 +4,7 @@ import prisma from '@/utils/db';
 import { verifyToken } from '@/utils/verifyToken';
 
 interface Props {
-    params: { id: string }
+    params:Promise<{ id: string }>
 }
 
 
@@ -15,9 +15,11 @@ interface Props {
  *  @access  public
  */
 export async function GET(request: NextRequest, { params }: Props) {
+     const { id } = await params;
+
     try {
         const article = await prisma.article.findUnique({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
             include: {
                 comments: {
                     include: {
@@ -25,10 +27,25 @@ export async function GET(request: NextRequest, { params }: Props) {
                             select: {
                                 username: true,
                             }
+                        },
+                        likes:{
+                            select:{
+                                userId:true
+                            }
                         }
                     },
                     orderBy: {
                         createdAt: 'desc'
+                    }
+                },
+                likes:{
+                    select:{
+                        userId:true
+                    }
+                },
+                bookmarks:{
+                    select:{
+                        userId:true
                     }
                 }
             }
@@ -55,6 +72,8 @@ export async function GET(request: NextRequest, { params }: Props) {
  *  @access  private (only admin can update article)
  */
 export async function PUT(request: NextRequest, { params }: Props) {
+     const { id } = await params;
+
     try {
         const user = verifyToken(request);
         if (user === null || user.isAdmin === false) {
@@ -65,7 +84,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
         }
 
         const article = await prisma.article.findUnique({
-            where: { id: parseInt(params.id) }
+            where: { id: parseInt(id) }
         });
 
         if (!article) {
@@ -74,7 +93,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
 
         const body = (await request.json()) as UpdateArticleDto;
         const updatedArticle = await prisma.article.update({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
             data: {
                 title: body.title,
                 description: body.description
@@ -97,6 +116,8 @@ export async function PUT(request: NextRequest, { params }: Props) {
  *  @access  private (only admin can delete article)
  */
 export async function DELETE(request: NextRequest, { params }: Props) {
+     const { id } = await params;
+
     try {
         const user = verifyToken(request);
         if (user === null || user.isAdmin === false) {
@@ -107,7 +128,7 @@ export async function DELETE(request: NextRequest, { params }: Props) {
         }
 
         const article = await prisma.article.findUnique({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
             include: { comments: true }
         });
         if (!article) {
@@ -115,7 +136,7 @@ export async function DELETE(request: NextRequest, { params }: Props) {
         }
 
         // deleting the article
-        await prisma.article.delete({ where: { id: parseInt(params.id) } });
+        await prisma.article.delete({ where: { id: parseInt(id) } });
 
         return NextResponse.json({ message: 'article deleted' }, { status: 200 });
     } catch (error) {
