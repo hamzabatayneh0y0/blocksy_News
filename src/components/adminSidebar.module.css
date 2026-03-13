@@ -5,7 +5,10 @@
   width: 20px;
   display: block;
 }
-.sideburger span {
+.bar{
+  
+}
+.sideburger .bar {
   position: absolute;
   width: 100%;
   height: 2px;
@@ -16,25 +19,25 @@
   background: var(--color-primary);
   transition: 0.5s;
 }
-.sideburger span:first-child {
+.sideburger .bar:first-child {
   top: 3px;
 }
-.sideburger span:last-child {
+.sideburger .bar:last-child {
   top: 16px;
 }
 
 .sideburger:hover {
   cursor: pointer;
 }
-input:checked + .sideburger span {
+input:checked + .sideburger .bar {
   opacity: 0;
   top: 50%;
 }
-input:checked + label span:first-child {
+input:checked + .sideburger .bar:first-child {
   opacity: 1;
   transform: rotate(405deg);
 }
-input:checked + label span:last-child {
+input:checked + .sideburger .bar:last-child {
   opacity: 1;
   transform: rotate(-405deg);
 }

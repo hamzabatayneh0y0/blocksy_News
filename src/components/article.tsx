@@ -17,7 +17,7 @@ export default function Articlecomponent({ article, userId }: ArticleProps) {
   const router = useRouter();
 
   const isBookmarked = article.bookmarks?.some(
-    (bookmark) => bookmark.userId === userId,
+    (bookmark: any) => bookmark.userId === userId,
   );
 
   async function handleSave() {

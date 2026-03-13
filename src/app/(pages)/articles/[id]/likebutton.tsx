@@ -16,7 +16,7 @@ export default function LikeButton({ article, userId }: ArticleProps) {
   const [like, setLike] = useState(false);
   const router = useRouter();
 
-  const isliked = article.likes?.some((like) => like.userId === userId);
+  const isliked = article.likes?.some((like: any) => like.userId === userId);
   async function handleLike() {
     try {
       await axios.post(`${DOMAIN}/api/articles/${article.id}/like`);

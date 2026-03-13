@@ -25,9 +25,9 @@ export default function AdminSidebar({ payload }: { payload: JWTPayload }) {
           htmlFor="sideburger"
           className={`sideburger ${style.sideburger}`}
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <span className={style.bar}></span>
+          <span className={style.bar}></span>
+          <span className={style.bar}></span>
         </label>
       </div>
 

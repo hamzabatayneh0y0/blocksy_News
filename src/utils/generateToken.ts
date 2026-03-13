@@ -22,7 +22,7 @@ export function setCookie(jwtPayload: JWTPayload): string {
         secure: process.env.NODE_ENV === 'production', // development=http, production= https
         sameSite: 'strict',
         path: '/',
-        maxAge: 60 
+        maxAge: 60 *60 *24* 30
     });
 
     return cookie;

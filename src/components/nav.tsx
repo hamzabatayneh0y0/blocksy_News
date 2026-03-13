@@ -110,7 +110,7 @@ export default function Nav({ payload }: { payload: JwtPayload | null }) {
       </ul>
       <input
         type="checkbox"
-        className="hidden"
+        className={`hidden ${style.inp}`}
         id="burger"
         checked={open}
         onChange={() => {
@@ -118,9 +118,9 @@ export default function Nav({ payload }: { payload: JwtPayload | null }) {
         }}
       />
       <label htmlFor="burger" className={`${style.burger} lg:hidden`}>
-        <span></span>
-        <span></span>
-        <span></span>
+        <span className={style.bar}></span>
+        <span className={style.bar}></span>
+        <span className={style.bar}></span>
       </label>
       <div
         className={`not-lg:fixed not-lg:top-0 not-lg:left-0 not-lg:w-full not-lg:h-full ${open ? "" : "hidden"} `}

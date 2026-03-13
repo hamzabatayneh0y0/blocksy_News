@@ -12,7 +12,10 @@
      height: 20px;
   width: 20px;
 }
-.burger span {
+.bar{
+
+}
+.burger .bar {
   position: absolute;
   width: 100%;
   height: 2px;
@@ -23,25 +26,28 @@
   background: var(--color-primary);
   transition: 0.5s;
 }
-.burger span:first-child {
+.burger .bar:first-child {
   top: 3px;
 }
-.burger span:last-child {
+.burger .bar:last-child {
   top: 16px;
 }
 
 .burger:hover {
   cursor: pointer;
 }
-input:checked + .burger span {
+.inp{
+
+}
+.inp:checked + .burger .bar {
   opacity: 0;
   top: 50%;
 }
-input:checked + label span:first-child {
+.inp:checked + .burger .bar:first-child {
   opacity: 1;
   transform: rotate(405deg);
 }
-input:checked + label span:last-child {
+.inp:checked + .burger .bar:last-child {
   opacity: 1;
   transform: rotate(-405deg);
 }

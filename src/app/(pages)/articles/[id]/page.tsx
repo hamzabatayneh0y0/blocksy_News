@@ -43,7 +43,7 @@ export default async function SingleArticle({ params }: SingleArticleProps) {
         <CommentForm id={article.id} />
       </div>
       <div className="comments flex flex-col gap-3">
-        {article.comments.map((comment) => {
+        {article.comments.map((comment: any) => {
           return (
             <Comment
               key={comment.id}

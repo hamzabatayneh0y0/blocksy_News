@@ -114,7 +114,7 @@ export default function Comment({ comment, userId }: CommentProps) {
   };
 
   const isliked = comment.likes?.some(
-    (like) => like.userId.toString() === userId,
+    (like: any) => like.userId.toString() === userId,
   );
   async function handleLike() {
     try {

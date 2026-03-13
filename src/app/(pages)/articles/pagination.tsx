@@ -12,9 +12,11 @@ export default function Pagination({
   const router = useRouter();
   return (
     <div className="pagination flex justify-center items-center gap-2 mt-12">
-      {pageNumber !== countArray[countArray.length - 1].toString() && (
+      {pageNumber !== (countArray[countArray.length - 1]?.toString() || "") && (
         <button
-          disabled={pageNumber == countArray[countArray.length - 1].toString()}
+          disabled={
+            pageNumber == (countArray[countArray.length - 1]?.toString() || "")
+          }
           className=" rounded-md cursor-pointer  font-light  p-2 hover:text-primary duration-300"
           onClick={() => {
             router.push(`/articles?pageNumber=${+pageNumber + 1}`);
