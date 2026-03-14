@@ -39,7 +39,6 @@ export default function Contact() {
             deleniti atque possimus non soluta quod expedita
           </p>
         </div>
-
         <div className="mt-15 flex justify-center gap-6 items-stretch  flex-col sm:flex-row ">
           <div className="bg-white  dark:bg-black dark:shadow-lg dark:shadow-white rounded-md p-5 flex items-center flex-col w-full sm:w-1/3">
             <div className="p-5 rounded-full bg-primary text-white dark:text-white text-2xl sm:text-4xl sm:p-8 ">

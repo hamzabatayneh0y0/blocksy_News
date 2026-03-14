@@ -9,6 +9,7 @@ export default async function getProfile(id: string) {
     headers: {
       Cookie: `jwtToken=${token}`,
     },
+    cache: "no-store",
   });
   if (!res.ok) {
     console.log(res);
