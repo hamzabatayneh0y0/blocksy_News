@@ -10,7 +10,6 @@ export default async function Home() {
   const payload = verifyTokenForPage(token);
 
   const articles = (await getArticles("1")) as NewArticle[];
-  console.log(articles);
   return (
     <div className=" py-12 px-5">
       <h2 className="font-bold text-3xl md:text-4xl mb-12">
