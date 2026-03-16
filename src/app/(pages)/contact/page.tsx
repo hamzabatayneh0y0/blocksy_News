@@ -19,7 +19,7 @@ export const metadata = {
 
 export default function Contact() {
   return (
-    <div className="">
+    <div className="flex-1">
       <div className={`py-12 px-5 ${style.header} shadow-xl  relative`}>
         <div className="text-center p-4 relative dark:z-1">
           <h1 className="font-bold mb-4 text-4xl sm:text-6xl ">Say Hello!</h1>

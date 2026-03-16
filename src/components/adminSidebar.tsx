@@ -32,7 +32,7 @@ export default function AdminSidebar({ payload }: { payload: JWTPayload }) {
       </div>
 
       <ul
-        className={`links flex flex-col gap-4 ${openSideBar ? "not-sm:w-full p-3" : "not-sm:w-0 "} not-sm:text-sm overflow-hidden duration-300 sm:p-5 transition-all`}
+        className={`links flex flex-col gap-4 ${openSideBar ? "not-sm:w-full p-3 pt-12" : "not-sm:w-0 "}  pt-12 not-sm:text-sm overflow-hidden duration-300 sm:p-5 transition-all sm:pt-12`}
       >
         <li className={`${listyle} `}>
           <Link

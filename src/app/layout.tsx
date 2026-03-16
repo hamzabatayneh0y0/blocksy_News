@@ -22,10 +22,10 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className={dark === "true" ? "dark" : ""}>
       <body
-        className={`${inter.className}   bg-body  dark:bg-black dark:text-white`}
+        className={`${inter.className}   bg-body  dark:bg-black dark:text-white `}
       >
         <ToastContainer theme="colored" position="top-center" />
-        <main>{children}</main>
+        <main className="">{children}</main>
       </body>
     </html>
   );

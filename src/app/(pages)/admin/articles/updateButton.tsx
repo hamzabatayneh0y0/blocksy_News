@@ -15,18 +15,21 @@ export default function UpdateButton({
   id,
   title,
   description,
+  theme,
 }: {
   id: number;
   title: string;
   description: string;
+  theme: boolean;
 }) {
   const router = useRouter();
   const updateArticle = () => {
     Swal.fire<updateFormResult>({
+      theme: theme ? "dark" : "light",
       title: "write a comment",
       html: `
-    <input type="text" id="title" class="p-3 border rounded-md inset-shadow-2xs shadow-black bg-white w-full mb-2" placeholder="comment" value=${title}>
-    <input type="text" id="description" class="p-3 border rounded-md inset-shadow-2xs shadow-black bg-white w-full" placeholder="comment" value=${description}>
+    <input type="text" id="title" class="p-3 border rounded-md inset-shadow-2xs shadow-black w-full mb-2" placeholder="comment" value=${title}>
+    <input type="text" id="description" class="p-3 border rounded-md inset-shadow-2xs shadow-black  w-full" placeholder="comment" value=${description}>
 
   `,
       confirmButtonText: "update",

@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { Comment } from "@prisma/client";
 import DeleteButtonComment from "./deleteButtonComment";
+import getTheme from "@/utils/getTheme";
 
 export default async function CommentsTable({
   comments,
 }: {
   comments: Comment[];
 }) {
+  const theme = await getTheme();
   return (
     <>
       <div>
@@ -30,7 +32,7 @@ export default async function CommentsTable({
                     </Link>
                   </td>
                   <td className=" border-2 p-1 sm:p-3">
-                    <DeleteButtonComment id={comment.id} />
+                    <DeleteButtonComment id={comment.id} theme={theme} />
                   </td>
                 </tr>
               );

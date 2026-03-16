@@ -16,17 +16,19 @@ type CommentFormResult = {
 type CommentProps = {
   comment: CommentWithUser;
   userId: string | undefined;
+  theme: boolean;
 };
-export default function Comment({ comment, userId }: CommentProps) {
+export default function Comment({ comment, userId, theme }: CommentProps) {
   const [like, setLike] = useState(false);
 
   let text: HTMLInputElement;
   const router = useRouter();
   const update = () => {
     Swal.fire<CommentFormResult>({
+      theme: theme ? "dark" : "light",
       title: "write a comment",
       html: `
-    <input type="text" id="text" class="p-3 border rounded-md inset-shadow-2xs shadow-black bg-white w-full" placeholder="comment" value=${comment.text}>
+    <input type="text" id="text" class="p-3 border rounded-md inset-shadow-2xs  shadow-black w-full " placeholder="comment" value=${comment.text}>
   `,
       confirmButtonText: "update",
       customClass: {
@@ -70,6 +72,7 @@ export default function Comment({ comment, userId }: CommentProps) {
   };
   const delet = () => {
     Swal.fire({
+      theme: theme ? "dark" : "light",
       title: "Are you sure?",
       text: "You won't be able to revert this!",
       icon: "warning",

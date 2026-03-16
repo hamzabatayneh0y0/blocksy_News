@@ -23,6 +23,10 @@ export default function Nav({ payload }: { payload: JwtPayload | null }) {
     };
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "auto";
+  }, [open]);
+
   async function handleLogout() {
     try {
       await axios.get(`${DOMAIN}/api/users/logout`);
@@ -43,7 +47,7 @@ export default function Nav({ payload }: { payload: JwtPayload | null }) {
         />
         <li className={`${style.pages} not-lg:mt-12`}>
           <span className=" hover:text-primary duration-300">pages</span>
-          <div className="flex flex-col gap-5 py-3 px-2 rounded-md lg:absolute lg:bg-white shadow-md  lg:left-0 lg:top-25 lg:duration-300 lg:invisible lg:w-25 lg:dark:bg-black dark:shadow-white">
+          <div className="flex flex-col gap-5 py-3 px-2 rounded-md lg:absolute lg:bg-white shadow-md  lg:left-0 lg:top-25 lg:duration-300 lg:invisible lg:w-25 lg:dark:bg-black dark:shadow-white z-9">
             <Link
               className="border-b py-2 hover:text-primary duration-300"
               href={"/articles?pageNumber=1"}
@@ -117,13 +121,16 @@ export default function Nav({ payload }: { payload: JwtPayload | null }) {
           setOpen(!open);
         }}
       />
-      <label htmlFor="burger" className={`${style.burger} lg:hidden`}>
-        <span className={style.bar}></span>
-        <span className={style.bar}></span>
-        <span className={style.bar}></span>
+      <label
+        htmlFor="burger"
+        className={`${style.burger} lg:hidden cursor-pointer`}
+      >
+        <span className={`cursor-pointer ${style.bar}`}></span>
+        <span className={`cursor-pointer ${style.bar}`}></span>
+        <span className={`cursor-pointer ${style.bar}`}></span>
       </label>
       <div
-        className={`not-lg:fixed not-lg:top-0 not-lg:left-0 not-lg:w-full not-lg:h-full ${open ? "" : "hidden"} `}
+        className={`not-lg:fixed not-lg:top-0 not-lg:left-0 not-lg:w-full not-lg:h-full z-1 ${open ? "" : "hidden"} `}
         onClick={() => {
           setOpen(false);
         }}

@@ -6,6 +6,7 @@ import CommentForm from "./commentForm";
 import { cookies } from "next/headers";
 import { verifyTokenForPage } from "@/utils/verifyToken";
 import LikeButton from "./likebutton";
+import getTheme from "@/utils/getTheme";
 
 type SingleArticleProps = {
   params: Promise<{ id: string }>;
@@ -13,7 +14,6 @@ type SingleArticleProps = {
 
 export async function generateMetadata({ params }: SingleArticleProps) {
   const { id } = await params;
-
   const article = await getSingleArticles(id);
 
   return {
@@ -32,6 +32,8 @@ export default async function SingleArticle({ params }: SingleArticleProps) {
   const token = (await cookies()).get("jwtToken")?.value || "";
   const payload = verifyTokenForPage(token);
   const article = (await getSingleArticles(id.toString())) as SingleArticle;
+  const theme = await getTheme();
+
   return (
     <div className="py-12 px-5 ">
       <Articlecomponent article={article} userId={payload?.id} />
@@ -48,6 +50,7 @@ export default async function SingleArticle({ params }: SingleArticleProps) {
             <Comment
               key={comment.id}
               comment={comment}
+              theme={theme}
               userId={payload?.id.toString()}
             />
           );

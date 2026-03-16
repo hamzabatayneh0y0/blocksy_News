@@ -17,15 +17,19 @@ type usertype = {
   bookmarks: (Bookmark & { article: Article })[];
 };
 
-export default function Tabs({ user }: { user: usertype }) {
+export default function Tabs({
+  user,
+  theme,
+}: {
+  user: usertype;
+  theme: boolean;
+}) {
   const [tab, setTab] = useState("liked");
-  console.log(tab);
   function handletab(e: React.MouseEvent<HTMLLIElement>) {
     setTab(
       (e.currentTarget as HTMLLIElement).getAttribute("data-tab") || "comment",
     );
   }
-
   return (
     <div className=" py-12">
       <ul className="flex gap-2 justify-around items-center flex-wrap my-12">
@@ -90,7 +94,7 @@ export default function Tabs({ user }: { user: usertype }) {
                         className=" border-2 p-1 sm:p-3 duration-300 animate-fadeIn"
                         style={{ animationDelay: `${i * 100}ms` }}
                       >
-                        <DeleteButtonComment id={comment.id} />
+                        <DeleteButtonComment id={comment.id} theme={theme} />
                       </td>
                     </tr>
                   );

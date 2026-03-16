@@ -6,12 +6,20 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-export default function DeleteButtonComment({ id }: { id: number }) {
+export default function DeleteButtonComment({
+  id,
+  theme,
+}: {
+  id: number;
+  theme: boolean;
+}) {
   const router = useRouter();
+
   return (
     <button
       onClick={async () => {
         Swal.fire({
+          theme: theme ? "dark" : "light",
           title: "Are you sure?",
           text: "You won't be able to revert this!",
           icon: "warning",

@@ -2,12 +2,14 @@ import { Article } from "@prisma/client";
 import Link from "next/link";
 import DeleteButton from "./deleteBottun";
 import UpdateButton from "./updateButton";
+import getTheme from "@/utils/getTheme";
 
 export default async function ArticlesTable({
   articles,
 }: {
   articles: Article[];
 }) {
+  const theme = await getTheme();
   return (
     <>
       <div>
@@ -29,13 +31,14 @@ export default async function ArticlesTable({
                   </td>
 
                   <td className=" border-2  p-1 sm:p-3">
-                    <DeleteButton id={article.id} />
+                    <DeleteButton id={article.id} theme={theme} />
                   </td>
                   <td className=" border-2  p-1 sm:p-3">
                     <UpdateButton
                       id={article.id}
                       title={article.title}
                       description={article.description}
+                      theme={theme}
                     />
                   </td>
                 </tr>

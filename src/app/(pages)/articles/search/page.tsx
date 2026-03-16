@@ -37,7 +37,7 @@ export default async function Search({ searchParams }: SearchProp) {
   };
   if (!articles.length)
     return (
-      <div className="py-12 px-5">
+      <div className="py-12 px-5 flex-1">
         <form
           action={handleSearch}
           className="my-5 flex gap-2 flex-col sm:flex-row sm:justify-between"
@@ -56,14 +56,14 @@ export default async function Search({ searchParams }: SearchProp) {
             search
           </button>
         </form>
-        <h2 className="font-bold text-3xl md:text-4xl mb-12">
+        <h2 className="font-bold text-3xl md:text-4xl my-12 ">
           No Articles Found With{" "}
           <span className="text-primary underline">{searchText}</span> Topic
         </h2>
       </div>
     );
   return (
-    <div className=" py-12 px-5">
+    <div className=" py-12 px-5 flex-1">
       <form
         action={handleSearch}
         className="my-5 flex gap-2 flex-col sm:flex-row sm:justify-between"

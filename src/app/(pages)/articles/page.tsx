@@ -43,7 +43,7 @@ export default async function Articles({ searchParams }: ArticlesProps) {
     redirect(`/articles/search?searchText=${search}`);
   };
   return (
-    <div className=" py-12 px-5">
+    <div className=" py-12 px-5 flex-1">
       <h2 className="font-bold text-3xl md:text-4xl mb-12">
         All <span className="text-primary">Articles</span>
       </h2>
@@ -65,7 +65,7 @@ export default async function Articles({ searchParams }: ArticlesProps) {
           search
         </button>
       </form>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 ">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
         {articles.map((article, i) => {
           return (
             <div

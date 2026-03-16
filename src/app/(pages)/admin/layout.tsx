@@ -26,7 +26,7 @@ export default async function AdminLayout({
   if (!payload || !payload.isAdmin) redirect("/");
 
   return (
-    <div className="my-1 flex gap-1 overflow-hidden">
+    <div className="my-1 flex gap-1 overflow-hidden flex-1">
       <AdminSidebar payload={payload} />
       <main className="flex-1 bg-white dark:bg-black dark:shadow-2xl dark:shadow-white  py-1 px-5 not-sm:overflow-x-hidden">
         {children}

@@ -5,6 +5,7 @@ import { verifyTokenForPage } from "@/utils/verifyToken";
 import Theme from "@/components/Theme";
 import Tabs from "./tabs";
 import { redirect } from "next/navigation";
+import getTheme from "@/utils/getTheme";
 
 export const metadata = {
   title: "Profile",
@@ -37,8 +38,10 @@ export default async function Profile({ params }: profileprop) {
   if (id !== currentuser?.id.toString()) redirect("/");
   const user = (await getProfile(id)) as usertype;
 
+  const theme = await getTheme();
+
   return (
-    <div className="px-5 py-12">
+    <div className="px-5 py-12 flex-1">
       <h1 className="text-center text-3xl sm:text-6xl font-bold capitalize duration-300">
         Hey {user.username}
       </h1>
@@ -61,7 +64,7 @@ export default async function Profile({ params }: profileprop) {
           </div>
         </div>
 
-        <Tabs user={user} />
+        <Tabs user={user} theme={theme} />
         {user.id === currentuser?.id && <Theme />}
       </div>
     </div>
