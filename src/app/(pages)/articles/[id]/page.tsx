@@ -35,7 +35,7 @@ export default async function SingleArticle({ params }: SingleArticleProps) {
   const theme = await getTheme();
 
   return (
-    <div className="py-12 px-5 ">
+    <div className="py-12 px-5 flex-1">
       <Articlecomponent article={article} userId={payload?.id} />
       <div className="mt-12 flex gap-1 items-center bg-white shadow-md p-5 border rounded-md w-fit  dark:bg-black dark:shadow-white">
         <span className="text-2xl"> {article.likes.length}</span>
