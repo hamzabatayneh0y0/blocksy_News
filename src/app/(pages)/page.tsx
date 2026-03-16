@@ -11,7 +11,7 @@ export default async function Home() {
 
   const articles = (await getArticles("1")) as NewArticle[];
   return (
-    <div className=" py-12 px-5">
+    <div className=" py-12 px-5 flex-1">
       <h2 className="font-bold text-3xl md:text-4xl mb-12">
         Latest <span className="text-primary">Articles</span>
       </h2>
