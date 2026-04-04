@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 import { cookies } from "next/headers";
+import CheckInternetProvider from "@/utils/checkInternetProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +26,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         className={`${inter.className}   bg-body  dark:bg-black dark:text-white `}
       >
         <ToastContainer theme="colored" position="top-center" />
-        <main className="">{children}</main>
+        <main className="">
+          <CheckInternetProvider>{children}</CheckInternetProvider>
+        </main>
       </body>
     </html>
   );
