@@ -12,7 +12,10 @@ type ArticleProps = {
   article: NewArticle;
   userId: number | undefined;
 };
-export default function Articlecomponent({ article, userId }: ArticleProps) {
+export default function SingleArticleComponent({
+  article,
+  userId,
+}: ArticleProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -72,16 +75,14 @@ export default function Articlecomponent({ article, userId }: ArticleProps) {
         )}
       </div>
       <h2
-        className="font-bold text-2xl lg:text-3xl hover:text-primary duration-300 line-clamp-1"
+        className="font-bold text-2xl lg:text-3xl text-center hover:text-primary duration-300"
         title="read more"
       >
-        <Link href={`/articles/${article.id}  `}>
+        <Link href={`/articles/${article.id}`}>
           {article.title.toUpperCase()}
         </Link>
       </h2>
-      <p className="font-light my-5 lg:text-2xl line-clamp-1">
-        {article.description}
-      </p>
+      <p className="font-light my-5 lg:text-2xl ">{article.description}</p>
       <span className="font-light block text-right text-sm">
         {new Date(article.createdAt).toLocaleDateString()}
       </span>

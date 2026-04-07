@@ -21,10 +21,10 @@ export default async function ArticlesTable({
                   <td className="font-light border-2 p-1 sm:p-3 text-center">
                     {i + 1}
                   </td>
-                  <td title="read" className="font-bold border-2  p-1 sm:p-3">
+                  <td title="read" className="font-bold border-2  p-1 sm:p-3 ">
                     <Link
                       href={`/articles/${article.id}`}
-                      className="capitalize m-auto block  hover:text-primary duration-300 cursor-pointer  "
+                      className="capitalize block  hover:text-primary duration-300 cursor-pointer "
                     >
                       {article.title}
                     </Link>

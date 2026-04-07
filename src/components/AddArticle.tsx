@@ -24,6 +24,7 @@ export default function AddArticle() {
       await axios.post(`${DOMAIN}/api/articles`, Form);
       toast.success("created");
       setLoading(false);
+      setForm({ title: "", description: "" });
       route.refresh();
     } catch (err: any) {
       console.log(err.response?.data?.message);

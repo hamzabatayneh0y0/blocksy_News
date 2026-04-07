@@ -1,5 +1,4 @@
 import { getSingleArticles } from "@/apiCalls/articles";
-import Articlecomponent from "@/components/article";
 import Comment from "@/components/comment";
 import type { SingleArticle } from "@/utils/types";
 import CommentForm from "./commentForm";
@@ -7,6 +6,7 @@ import { cookies } from "next/headers";
 import { verifyTokenForPage } from "@/utils/verifyToken";
 import LikeButton from "./likebutton";
 import getTheme from "@/utils/getTheme";
+import SingleArticleComponent from "@/components/SingleArticleComponent";
 
 type SingleArticleProps = {
   params: Promise<{ id: string }>;
@@ -36,7 +36,7 @@ export default async function SingleArticle({ params }: SingleArticleProps) {
 
   return (
     <div className="py-12 px-5 flex-1">
-      <Articlecomponent article={article} userId={payload?.id} />
+      <SingleArticleComponent article={article} userId={payload?.id} />
       <div className="mt-12 flex gap-1 items-center bg-white shadow-md p-5 border rounded-md w-fit  dark:bg-black dark:shadow-white">
         <span className="text-2xl"> {article.likes.length}</span>
         <LikeButton article={article} userId={payload?.id} />

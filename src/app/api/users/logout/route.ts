@@ -10,6 +10,7 @@ import { cookies } from 'next/headers';
 export async function GET(request: NextRequest) {
     try {
         (await cookies()).delete("jwtToken");
+        (await cookies()).delete("dark")
         return NextResponse.json({ message: 'logout' }, { status: 200 });
     } catch (error) {
         return NextResponse.json(
