@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
         
           const reset=Math.ceil((result.reset - Date.now())/1000/60);
           if (!result.success) {
-           return NextResponse.json({message: `The request has been rate limited,please try after ${reset} minutes,you have ${result.remaining} tries left`} ,{status:429})
+           return NextResponse.json({message: `The request has been rate limited,please try again later,you have ${result.remaining} tries left`} ,{status:429})
             
           }
 
