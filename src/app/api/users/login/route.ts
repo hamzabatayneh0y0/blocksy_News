@@ -4,6 +4,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import prisma from '@/utils/db';
 import bcrypt from 'bcryptjs';
 import { setCookie } from '@/utils/generateToken';
+import { ratelimit } from '@/lib/redis';
 
 
 /**
@@ -14,6 +15,18 @@ import { setCookie } from '@/utils/generateToken';
  */
 export async function POST(request: NextRequest) {
     try {
+        
+        const identifier =   request.headers.get("x-forwarded-for")?.split(",")[0] ||
+          request.headers.get("x-real-ip") ||
+          "unknown";
+          const result = await ratelimit.limit(identifier);
+        
+          const reset=Math.ceil((result.reset - Date.now())/1000/60);
+          if (!result.success) {
+           return NextResponse.json({message: `The request has been rate limited,please try after ${reset} minutes,you have ${result.remaining} tries left`} ,{status:429})
+            
+          }
+
         const body = await request.json() as LoginUserDto;
         const validation = loginSchema.safeParse(body);
         if (!validation.success) {
