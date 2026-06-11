@@ -20,7 +20,7 @@ export default function RegesterForm() {
   const route = useRouter();
   function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-    setRegester((prev) => ({ ...prev, [name]: value }));
+    setRegester((prev) => ({ ...prev, [name]: value.trim() }));
   }
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,6 +28,7 @@ export default function RegesterForm() {
       setLoading(true);
       await axios.post(`${DOMAIN}/api/users/register`, Regester);
       setLoading(false);
+      route.refresh();
       route.push("/");
     } catch (err: any) {
       console.log(err.response?.data?.message);

@@ -14,7 +14,7 @@ export const createArticleSchema = z.object({
 
 // Register Schema
 export const registerSchema = z.object({
-    username: z.string().min(2,{ message: "username should be at least 2 characters long" }).max(100, { message: "username should be less than 100 characters" }), 
+    username: z.string().min(2,{ message: "username should be at least 2 characters long" }).max(100, { message: "username should be less than 100 characters" }).regex(/^[a-zA-Z0-9_]+$/,{message:"username should only contain letters, numbers and _"}), 
     email: z.string().min(3,{ message: "email should be at least 3 characters long" }).max(200, { message: "email should be less than 200 characters" }).email(),
     password: z.string().min(6,{ message: "password should be at least 6 characters long" }),
 });
@@ -33,7 +33,7 @@ export const createCommentShema = z.object({
 
 // Update User Profile Schema
 export const updateUserSchema = z.object({
-    username: z.string().min(2,{ message: "username should be at least 2 characters long" }).max(100,{ message: "username should be less than 100 characters" }).optional(),
+    username: z.string().min(2,{ message: "username should be at least 2 characters long" }).max(100,{ message: "username should be less than 100 characters" }).regex(/^[a-zA-Z0-9_]+$/,{message:"username should only contain letters, numbers and _"}).optional(),
     email: z.string().min(3,{ message: "email should be at least 3 characters long" }).max(200, { message: "email should be less than 200 characters" }).email().optional(),
     password: z.string().min(6,{ message: "password should be at least 6 characters long" }).optional(),
 });

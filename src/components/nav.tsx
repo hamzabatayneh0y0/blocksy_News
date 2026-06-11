@@ -75,11 +75,11 @@ export default function Nav({ payload }: { payload: JwtPayload | null }) {
             contact us
           </Link>
         </li>
-        <li className="capitalize">
+        <li className="capitalize max-w-[148px] flex">
           {payload ? (
             <>
               <Link
-                className=" hover:text-primary duration-300 cursor-pointer font-bold"
+                className=" hover:text-primary duration-300 cursor-pointer font-bold truncate"
                 href={`/profile/${payload?.id}`}
               >
                 {payload?.username}
@@ -213,14 +213,14 @@ export default function Nav({ payload }: { payload: JwtPayload | null }) {
             contact us
           </Link>
         </li>
-        <li className="capitalize">
+        <li className="capitalize max-w-[148px] flex">
           {payload ? (
             <>
               <Link
                 onClick={() => {
                   setOpen(false);
                 }}
-                className=" hover:text-primary duration-300 cursor-pointer font-bold"
+                className=" hover:text-primary duration-300 cursor-pointer font-bold truncate"
                 href={`/profile/${payload?.id}`}
               >
                 {payload?.username}

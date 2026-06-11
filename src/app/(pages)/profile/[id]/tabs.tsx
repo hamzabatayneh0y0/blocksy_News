@@ -25,6 +25,7 @@ export default function Tabs({
   theme: boolean;
 }) {
   const [tab, setTab] = useState("liked");
+  console.log(user);
   function handletab(e: React.MouseEvent<HTMLLIElement>) {
     setTab(
       (e.currentTarget as HTMLLIElement).getAttribute("data-tab") || "comment",
@@ -135,9 +136,12 @@ export default function Tabs({
             <div>No Liked Articles</div>
           ) : (
             user.articleLikes?.map((articleLike, i) => {
+              const f = user.bookmarks.find(
+                (bookmark) => bookmark.articleId === articleLike.articleId,
+              );
               const newArticle = {
                 ...articleLike.article,
-                bookmarks: [{ userId: user?.id }],
+                bookmarks: f ? [{ userId: user?.id }] : [],
               };
               return (
                 <div

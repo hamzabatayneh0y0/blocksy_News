@@ -5,7 +5,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FaVoteYea } from "react-icons/fa";
+import { FaCheck, FaVoteYea } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 type ArticleProps = {
@@ -24,6 +24,7 @@ export default function Articlecomponent({ article, userId }: ArticleProps) {
     try {
       await axios.post(`${DOMAIN}/api/articles/${article.id}/save`);
       router.refresh();
+      toast.success(`Done`);
     } catch (err: any) {
       console.log(err.response?.data?.message);
       toast.error(err.response?.data?.message);

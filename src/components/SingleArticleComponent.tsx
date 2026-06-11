@@ -27,6 +27,7 @@ export default function SingleArticleComponent({
     try {
       await axios.post(`${DOMAIN}/api/articles/${article.id}/save`);
       router.refresh();
+      toast.success(`Done`);
     } catch (err: any) {
       console.log(err.response?.data?.message);
       toast.error(err.response?.data?.message);

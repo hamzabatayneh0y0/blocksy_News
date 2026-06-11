@@ -16,7 +16,7 @@ export default function LoginForm() {
   const route = useRouter();
   function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-    setLogIn((prev) => ({ ...prev, [name]: value }));
+    setLogIn((prev) => ({ ...prev, [name]: value.trim() }));
   }
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,6 +24,7 @@ export default function LoginForm() {
       setLoading(true);
       await axios.post(`${DOMAIN}/api/users/login`, LogIn);
       setLoading(false);
+      route.refresh();
       route.push("/");
     } catch (err: any) {
       console.log(err.response?.data?.message);
