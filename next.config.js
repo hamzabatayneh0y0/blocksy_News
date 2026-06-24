@@ -14,11 +14,6 @@ const cspHeader = `
     upgrade-insecure-requests;
 `;
 const nextConfig = {
-  experimental: {
-    sri: {
-      algorithm: "sha256",
-    },
-  },
   async headers() {
     return [
       {
