@@ -44,6 +44,7 @@ export default function RegesterForm() {
         required
         type="text"
         name="username"
+        maxLength={100}
         placeholder="your name"
         onChange={handleOnChange}
         className="border border-black inset-shadow-2xs px-2 py-3 rounded-md dark:bg-black dark:inset-shadow-white"
@@ -52,6 +53,7 @@ export default function RegesterForm() {
         required
         type="email"
         name="email"
+        maxLength={200}
         placeholder="your email"
         onChange={handleOnChange}
         className="border border-black inset-shadow-2xs px-2 py-3 rounded-md dark:bg-black dark:inset-shadow-white"

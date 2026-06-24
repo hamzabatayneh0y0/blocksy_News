@@ -15,7 +15,7 @@ export async function getArticles(page: string) {
 
 export async function getSingleArticles(id: string) {
   const data = await fetch(`${DOMAIN}/api/articles/${id}`, {
-    next: { revalidate: 60 },
+    cache: "no-store",
   });
 
   if (!data.ok) {

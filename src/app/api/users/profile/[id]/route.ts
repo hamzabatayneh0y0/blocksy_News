@@ -20,8 +20,8 @@ export async function DELETE(request: NextRequest, { params }: Props) {
 
     try {
         const user = await prisma.user.findUnique({ 
-            where: { id: parseInt(id) },
-            include: { comments: true }
+            where: { id: parseInt(id) }
+            
         });
         if (!user) {
             return NextResponse.json(

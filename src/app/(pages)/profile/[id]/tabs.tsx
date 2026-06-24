@@ -62,7 +62,7 @@ export default function Tabs({
           {user.comments.length === 0 ? (
             <div>No Comments</div>
           ) : (
-            <table className="w-full border-collapse">
+            <table className="w-full border-collapse animate-fadeIn">
               <tbody>
                 {user.comments.map((comment, i) => {
                   return (
@@ -119,7 +119,7 @@ export default function Tabs({
               return (
                 <div
                   key={bookmark.id}
-                  className={`opacity-0 animate-fadeIn `}
+                  className={`opacity-0 animate-fadeIn mb-1`}
                   style={{ animationDelay: `${i * 100}ms` }}
                 >
                   <Articlecomponent article={newArticle} userId={user?.id} />
@@ -146,7 +146,7 @@ export default function Tabs({
               return (
                 <div
                   key={articleLike.id}
-                  className={`opacity-0 animate-fadeIn `}
+                  className={`opacity-0 animate-fadeIn mb-1`}
                   style={{ animationDelay: `${i * 100}ms` }}
                 >
                   <Articlecomponent article={newArticle} userId={user?.id} />

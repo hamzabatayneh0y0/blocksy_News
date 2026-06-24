@@ -40,6 +40,7 @@ export default function LoginForm() {
         required
         type="email"
         name="email"
+        maxLength={200}
         placeholder="your email"
         onChange={handleOnChange}
         className="border border-black inset-shadow-2xs px-2 py-3 rounded-md dark:bg-black dark:inset-shadow-white"
@@ -72,6 +73,7 @@ export default function LoginForm() {
 
       <button
         type="submit"
+        disabled={Loading}
         className="w-fit bg-primary text-white cursor-pointer rounded-md m-auto px-3 py-1"
       >
         {Loading ? (

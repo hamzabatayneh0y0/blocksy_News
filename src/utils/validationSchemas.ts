@@ -16,13 +16,25 @@ export const createArticleSchema = z.object({
 export const registerSchema = z.object({
     username: z.string().min(2,{ message: "username should be at least 2 characters long" }).max(100, { message: "username should be less than 100 characters" }).regex(/^[a-zA-Z0-9_]+$/,{message:"username should only contain letters, numbers and _"}), 
     email: z.string().min(3,{ message: "email should be at least 3 characters long" }).max(200, { message: "email should be less than 200 characters" }).email(),
-    password: z.string().min(6,{ message: "password should be at least 6 characters long" }),
+    password: z.string()
+  .min(8, "Password must be at least 8 characters")
+ 
+  .regex(/[a-z]/, "Must include a lowercase letter")
+  .regex(/[A-Z]/, "Must include an uppercase letter")
+  .regex(/[0-9]/, "Must include a number")
+  .regex(/[^a-zA-Z0-9]/, "Must include a special character")
 });
 
 // Login Schema
 export const loginSchema = z.object({
     email: z.string().min(3).max(200, { message: "email should be less than 200 characters" }).email(),
-    password: z.string().min(6,{ message: "password should be at least 6 characters long" }),
+   password: z.string()
+  .min(8, "Password must be at least 8 characters")
+ 
+  .regex(/[a-z]/, "Must include a lowercase letter")
+  .regex(/[A-Z]/, "Must include an uppercase letter")
+  .regex(/[0-9]/, "Must include a number")
+  .regex(/[^a-zA-Z0-9]/, "Must include a special character")
 });
 
 // Create Comment Schema
@@ -35,5 +47,11 @@ export const createCommentShema = z.object({
 export const updateUserSchema = z.object({
     username: z.string().min(2,{ message: "username should be at least 2 characters long" }).max(100,{ message: "username should be less than 100 characters" }).regex(/^[a-zA-Z0-9_]+$/,{message:"username should only contain letters, numbers and _"}).optional(),
     email: z.string().min(3,{ message: "email should be at least 3 characters long" }).max(200, { message: "email should be less than 200 characters" }).email().optional(),
-    password: z.string().min(6,{ message: "password should be at least 6 characters long" }).optional(),
+   password: z.string()
+  .min(8, "Password must be at least 8 characters")
+ 
+  .regex(/[a-z]/, "Must include a lowercase letter")
+  .regex(/[A-Z]/, "Must include an uppercase letter")
+  .regex(/[0-9]/, "Must include a number")
+  .regex(/[^a-zA-Z0-9]/, "Must include a special character").optional()
 });
