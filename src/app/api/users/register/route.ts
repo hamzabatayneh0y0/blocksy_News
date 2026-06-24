@@ -4,7 +4,6 @@ import { NextResponse, NextRequest } from 'next/server';
 import prisma from '@/utils/db';
 import bcrypt from 'bcryptjs';
 import { setCookie } from '@/utils/generateToken';
-import { ratelimit } from '@/lib/redis';
 
 /**
  *  @method  POST
