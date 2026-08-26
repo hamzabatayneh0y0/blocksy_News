@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Heart } from "lucide-react";
 
 import ArticleComponent from "@/components/Article";
-import { Article, getArticlesProps } from "@/utils/types";
+import { getArticlesProps } from "@/utils/types";
 import { auth } from "@/auth";
 import { getForYouArticles } from "@/apiCalls/profile";
 import ForYouSection from "@/components/ForYouSection";
