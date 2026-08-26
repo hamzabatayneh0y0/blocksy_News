@@ -1,4 +1,12 @@
 import Image from "next/image";
+import Link from "next/link";
+import { Metadata } from "next";
+
+import { GoCheckCircle } from "react-icons/go";
+import { IoCubeOutline } from "react-icons/io5";
+import { FaFacebook, FaFeather, FaInstagramSquare } from "react-icons/fa";
+import { FaSquareXTwitter } from "react-icons/fa6";
+
 import image1 from "../../../../public/images/ali-marel-489801-unsplash.jpg";
 import achievements1 from "../../../../public/images/faye-cornish-n3XTxxV7qhI-unsplash.jpg";
 import achievements2 from "../../../../public/images/manuel-nobauer-M_GouNr9Zek-unsplash.jpg";
@@ -7,14 +15,7 @@ import employer1 from "../../../../public/images/philipe-cavalcante-576695-unspl
 import employer2 from "../../../../public/images/jakob-owens-565883-unsplash-293x300.jpg";
 import employer3 from "../../../../public/images/julian-schropel-1165717-unsplash-293x300.jpg";
 
-import style from "./about.module.css";
-import { GoCheckCircle } from "react-icons/go";
-import { IoCubeOutline } from "react-icons/io5";
-import { FaFacebook, FaFeather, FaInstagramSquare } from "react-icons/fa";
 import Statistics from "./statistics";
-import { FaSquareXTwitter } from "react-icons/fa6";
-import Link from "next/link";
-import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About | Articles Platform",
@@ -24,250 +25,334 @@ export const metadata: Metadata = {
     title: "About | Articles Platform",
     description:
       "Learn more about our articles platform and how we help people discover great content.",
-    images: ["/public/next.svg"],
   },
 };
 
+const values = [
+  {
+    icon: GoCheckCircle,
+    title: "Authenticity",
+    description:
+      "We believe in genuine stories, honest perspectives, and content that feels meaningful rather than manufactured.",
+  },
+  {
+    icon: IoCubeOutline,
+    title: "Real Engagement",
+    description:
+      "Our platform encourages readers to discover, interact with, and save the content that genuinely interests them.",
+  },
+  {
+    icon: FaFeather,
+    title: "Unique Stories",
+    description:
+      "Every writer has a different perspective. We create a space where different ideas and stories can be discovered.",
+  },
+];
+
+const achievements = [
+  {
+    image: achievements1,
+    title: "A Growing Community",
+    description:
+      "Bringing readers and writers together through meaningful and engaging content.",
+  },
+  {
+    image: achievements2,
+    title: "Discover New Ideas",
+    description:
+      "Helping readers explore different perspectives, topics, and experiences every day.",
+  },
+  {
+    image: achievements3,
+    title: "Built for Everyone",
+    description:
+      "A simple platform designed to make reading, sharing, and discovering articles enjoyable.",
+  },
+];
+
+const team = [
+  {
+    image: employer1,
+    name: "Scott Estrada",
+    role: "Developer",
+  },
+  {
+    image: employer2,
+    name: "Barbara Ramos",
+    role: "Graphic Designer",
+  },
+  {
+    image: employer3,
+    name: "Angela Caroll",
+    role: "Chief Editor",
+  },
+];
+
 export default function About() {
   return (
-    <div className="about">
-      <div className={`py-12 px-5 ${style.header} relative`}>
-        <div className="text-center p-4 relative dark:z-1">
-          <h1 className="font-bold mb-4 text-4xl sm:text-6xl ">About Us</h1>
-          <p className="font-light">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ut eos
-            magni provident adipisicing elit. Ut eos magni provident
+    <main className="overflow-hidden">
+      {/* Hero */}
+      <section className="relative isolate border-b bg-linear-to-br from-primary/8 via-background to-background px-5 py-20 sm:py-28">
+        <div className="absolute -right-32 -top-32 -z-10 size-80 rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 -z-10 size-80 rounded-full bg-primary/10 blur-3xl" />
+
+        <div className="mx-auto max-w-4xl text-center">
+          <span className="mb-5 inline-flex rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+            About our platform
+          </span>
+
+          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
+            Stories worth <span className="text-primary">discovering.</span>
+          </h1>
+
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
+            A place where curious readers discover interesting ideas, meaningful
+            stories, and perspectives from people around the world.
           </p>
         </div>
-        <div className="dark:absolute dark:inset-0 dark:bg-black/50 dark:z-0"></div>
-      </div>
+      </section>
 
-      <div className="ourStory py-12 px-5">
-        <div className="flex justify-center items-center  flex-col md:flex-row">
-          <div className="basis-1/2 m-4 p-5  sm:p-12">
-            <Image className="rounded-md" alt="our story" src={image1} />
-          </div>
-          <div className="basis-1/2 p-4">
-            <h2 className=" font-bold mb-12  text-4xl">Our Story</h2>
+      {/* Our Story */}
+      <section className="px-5 py-20 sm:py-28">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2 md:gap-20">
+          <div className="relative">
+            <div className="absolute -bottom-5 -left-5 h-32 w-32 rounded-2xl bg-primary/10" />
 
-            <p className="font-light mb-4">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
-              aspernatur adipisci reiciendis minus labore provident tempora ea
-              dolorum distinctio. Perspiciatis quibusdam aliquid quos corporis
-              vel eveniet sint asperiores ex nesciunt.
-            </p>
-            <p className="font-light mb-4">
-              dolorum distinctio. Perspiciatis quibusdam aliquid quos corporis
-              vel eveniet sint asperiores ex nesciunt.
-            </p>
-            <h2 className=" font-bold my-8  text-4xl ">About Our Company</h2>
-            <p className="font-light mb-4">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam,
-              earum, ea quod in fuga magnam inventore cumque aliquam sint
-              repudiandae sequi unde. Amet quod, consequuntur cupiditate
-              accusamus iure quisquam et. Lorem ipsum dolor, sit amet
-              consectetur adipisicing elit. Numquam, earum, ea quod in fuga
-            </p>
-            <p className="font-light mt-12">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam,
-              earum, ea quod in fuga magnam inventore cumque aliquam sint
-              repudiandae sequi unde. Amet quod, consequuntur cupiditate
-              accusamus iure quisquam et.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col mt-12 gap-8 md:flex-row md:justify-center md:items-center">
-          <div>
-            <span className="p-5 text-3xl font-bold text-white bg-primary w-fit rounded-full block">
-              <GoCheckCircle />
-            </span>
-            <h3 className="text-2xl font-bold my-2">Authencity</h3>
-            <p className="font-light">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quasi
-              quae sapiente, vero porro ut asperiores. Dignissimos voluptas
-              voluptates non accusamus quia, quis
-            </p>
-          </div>
-          <div>
-            <span className="p-5 text-3xl font-bold text-white bg-primary w-fit rounded-full block">
-              <IoCubeOutline />
-            </span>
-            <h3 className="text-2xl font-bold my-2">Real Engagement</h3>
-            <p className="font-light">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quasi
-              quae sapiente, vero porro ut asperiores. Dignissimos voluptas
-              voluptates non accusamus quia, quis
-            </p>
-          </div>
-          <div>
-            <span className="p-5 text-3xl font-bold text-white bg-primary w-fit rounded-full block">
-              <FaFeather />
-            </span>
-            <h3 className="text-2xl font-bold my-2">Unique Stories</h3>
-            <p className="font-light">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quasi
-              quae sapiente, vero porro ut asperiores. Dignissimos voluptas
-              voluptates non accusamus quia, quis
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className={`${style.achievements} py-12 px-5 relative`}>
-        <div className="dark:absolute dark:inset-0 dark:bg-black/50 dark:z-0"></div>
-
-        <h1 className="font-bold mb-4 text-4xl text-center relative dark:z-1">
-          Our Achievements
-        </h1>
-        <p className="text-center font-light relative dark:z-1">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ut eos magni
-          provident adipisicing elit. Ut eos magni provident
-        </p>
-
-        <div className="flex justify-center gap-5 items-center  flex-col sm:flex-row mt-12 relative dark:z-1">
-          <div className="rounded-md bg-white dark:bg-black">
-            <div className="">
+            <div className="relative overflow-hidden rounded-2xl shadow-xl">
               <Image
-                className="rounded-t-md h-75 w-full"
-                src={achievements1}
-                alt="achievements1"
+                src={image1}
+                alt="Our story"
+                className="h-auto w-full object-cover"
+                placeholder="blur"
+                priority
               />
             </div>
-            <div className="text p-2 pb-4 text-center">
-              <h3 className="font-bold sm:text-2xl my-4">
-                Lorem ipsum dolor, sit amet consectetur
-              </h3>
-              <p className="font-light">
-                nesciunt officiis aperiam amet qui rem. Harum consequuntur vero
-                nesciunt consectetur mollitia!
-              </p>
+
+            <div className="absolute -bottom-6 right-5 rounded-xl border bg-card px-5 py-4 shadow-lg">
+              <p className="text-2xl font-bold text-primary">100%</p>
+              <p className="text-xs text-muted-foreground">Built for readers</p>
             </div>
           </div>
-          <div className="rounded-md bg-white dark:bg-black">
-            <div>
-              <Image
-                className="rounded-t-md h-75 w-full"
-                src={achievements2}
-                alt="achievements2"
-              />
-            </div>
-            <div className="text p-2 pb-4  text-center">
-              <h3 className="font-bold sm:text-2xl my-4">
-                Lorem ipsum dolor, sit amet consectetur
-              </h3>
-              <p className="font-light">
-                nesciunt officiis aperiam amet qui rem. Harum consequuntur vero
-                nesciunt consectetur mollitia!
-              </p>
-            </div>
-          </div>
-          <div className="rounded-md bg-white dark:bg-black">
-            <div>
-              <Image
-                className="rounded-t-md h-75 w-full"
-                src={achievements3}
-                alt="achievements3"
-              />
-            </div>
-            <div className="text p-2 pb-4  text-center">
-              <h3 className="font-bold sm:text-2xl my-4">
-                Lorem ipsum dolor, sit amet consectetur
-              </h3>
-              <p className="font-light">
-                nesciunt officiis aperiam amet qui rem. Harum consequuntur vero
-                nesciunt consectetur mollitia!
-              </p>
+
+          <div>
+            <span className="text-sm font-semibold uppercase tracking-wider text-primary">
+              Our story
+            </span>
+
+            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+              Built around the joy of discovering great content.
+            </h2>
+
+            <p className="mt-6 leading-7 text-muted-foreground">
+              We created this platform with a simple idea: discovering a good
+              article should feel effortless. Instead of overwhelming readers
+              with endless content, we want to make it easier to find stories
+              that are actually worth their time.
+            </p>
+
+            <p className="mt-4 leading-7 text-muted-foreground">
+              Readers can explore articles, interact with writers, save
+              interesting content, and share stories with others.
+            </p>
+
+            <div className="mt-10 grid grid-cols-2 gap-6 border-t pt-8">
+              <div>
+                <p className="text-3xl font-bold text-primary">01</p>
+                <p className="mt-1 text-sm text-muted-foreground">Discover</p>
+              </div>
+
+              <div>
+                <p className="text-3xl font-bold text-primary">02</p>
+                <p className="mt-1 text-sm text-muted-foreground">Connect</p>
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
-        <Statistics />
-      </div>
+      {/* Values */}
+      <section className="bg-muted/40 px-5 py-20 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="text-sm font-semibold uppercase tracking-wider text-primary">
+              What we believe in
+            </span>
 
-      <div className="employers py-12 px-5 flex justify-center gap-5 items-center  flex-col sm:flex-row ">
-        <div className="bg-white dark:bg-black rounded-md p-5 flex justify-center items-center flex-col w-full">
-          <div className="sm:w-38 sm:h-38">
-            <Image
-              className="rounded-full w-full h-full "
-              src={employer1}
-              alt="employer1"
-            />
+            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+              Built on simple values
+            </h2>
+
+            <p className="mt-4 text-muted-foreground">
+              The principles behind the experience we want to create.
+            </p>
           </div>
-          <div className="text p-2 pb-4 text-center">
-            <h3 className="font-bold text-2xl my-4">Scott Estrada</h3>
-            <p className="font-light">Developer</p>
-          </div>
-          <div className="scial flex gap-2 my-4 flex-wrap text-3xl justify-center">
-            <Link className="text-primary" href={"/"}>
-              <FaFacebook />
-            </Link>
-            <Link className="text-primary" href={"/"}>
-              {" "}
-              <FaInstagramSquare />
-            </Link>
 
-            <Link className="text-primary" href={"/"}>
-              {" "}
-              <FaSquareXTwitter />
-            </Link>
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {values.map((value) => {
+              const Icon = value.icon;
+
+              return (
+                <div
+                  key={value.title}
+                  className="group rounded-2xl border bg-card p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                    <Icon />
+                  </div>
+
+                  <h3 className="mt-6 text-xl font-bold">{value.title}</h3>
+
+                  <p className="mt-3 leading-7 text-muted-foreground">
+                    {value.description}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
-        <div className="bg-white dark:bg-black rounded-md p-5 flex justify-center items-center flex-col w-full">
-          <div className=" sm:w-38 sm:h-38">
-            <Image
-              className="rounded-full w-full h-full"
-              src={employer2}
-              alt="employer2"
-            />
-          </div>
-          <div className="text p-2 pb-4 text-center">
-            <h3 className="font-bold text-2xl my-4">Barbara Ramos</h3>
-            <p className="font-light">Graphic Designer</p>
-          </div>
-          <div className="scial flex gap-2 my-4 flex-wrap text-3xl justify-center">
-            <Link className="text-primary" href={"/"}>
-              <FaFacebook />
-            </Link>
-            <Link className="text-primary" href={"/"}>
-              {" "}
-              <FaInstagramSquare />
-            </Link>
+      </section>
 
-            <Link className="text-primary" href={"/"}>
-              {" "}
-              <FaSquareXTwitter />
-            </Link>
+      {/* Achievements */}
+      <section className="relative px-5 py-20 sm:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="text-sm font-semibold uppercase tracking-wider text-primary">
+              Our achievements
+            </span>
+
+            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+              More than just articles
+            </h2>
+
+            <p className="mt-4 text-muted-foreground">
+              We are building an experience around discovery, interaction, and
+              meaningful content.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {achievements.map((achievement) => (
+              <article
+                key={achievement.title}
+                className="overflow-hidden rounded-2xl border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              >
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <Image
+                    src={achievement.image}
+                    alt={achievement.title}
+                    fill
+                    placeholder="blur"
+                    className="object-cover transition-transform duration-500 hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+
+                <div className="p-6">
+                  <h3 className="text-xl font-bold">{achievement.title}</h3>
+
+                  <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                    {achievement.description}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <Statistics />
+        </div>
+      </section>
+
+      {/* Team */}
+      <section className="border-t bg-muted/40 px-5 py-20 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="text-sm font-semibold uppercase tracking-wider text-primary">
+              The team
+            </span>
+
+            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+              The people behind the platform
+            </h2>
+
+            <p className="mt-4 text-muted-foreground">
+              A small team focused on creating a better way to discover and
+              share stories.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {team.map((member) => (
+              <div
+                key={member.name}
+                className="rounded-2xl border bg-card p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="mx-auto relative size-32 overflow-hidden rounded-full ring-4 ring-primary/10 sm:size-36">
+                  <Image
+                    src={member.image}
+                    alt={member.name}
+                    fill
+                    placeholder="blur"
+                    className="h-full w-full object-cover object-center"
+                  />
+                </div>
+
+                <h3 className="mt-6 text-xl font-bold">{member.name}</h3>
+
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {member.role}
+                </p>
+
+                <div className="mt-5 flex justify-center gap-4 text-2xl text-primary">
+                  <Link
+                    href="/"
+                    aria-label={`${member.name} Facebook`}
+                    className="transition-transform hover:-translate-y-1"
+                  >
+                    <FaFacebook />
+                  </Link>
+
+                  <Link
+                    href="/"
+                    aria-label={`${member.name} Instagram`}
+                    className="transition-transform hover:-translate-y-1"
+                  >
+                    <FaInstagramSquare />
+                  </Link>
+
+                  <Link
+                    href="/"
+                    aria-label={`${member.name} X`}
+                    className="transition-transform hover:-translate-y-1"
+                  >
+                    <FaSquareXTwitter />
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-        <div className="bg-white dark:bg-black rounded-md p-5 flex justify-center items-center  flex-col w-full">
-          <div className=" sm:w-38 sm:h-38">
-            <Image
-              className="rounded-full w-full h-full"
-              src={employer3}
-              alt="employer3"
-            />
-          </div>
-          <div className="text p-2 pb-4 text-center">
-            <h3 className="font-bold text-2xl my-4">Angela Caroll</h3>
-            <p className="font-light">Chief Editor</p>
-          </div>
-          <div className="social flex gap-2 my-4 flex-wrap text-3xl justify-center ">
-            <Link className="text-primary" href={"/"}>
-              <FaFacebook />
-            </Link>
-            <Link className="text-primary" href={"/"}>
-              {" "}
-              <FaInstagramSquare />
-            </Link>
+      </section>
 
-            <Link className="text-primary" href={"/"}>
-              {" "}
-              <FaSquareXTwitter />
-            </Link>
-          </div>
+      {/* CTA */}
+      <section className="px-5 py-20 sm:py-24">
+        <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl bg-primary px-6 py-14 text-center text-primary-foreground shadow-xl sm:px-12">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            Ready to discover something new?
+          </h2>
+
+          <p className="mx-auto mt-4 max-w-xl text-primary-foreground/80">
+            Explore articles, find new perspectives, and save the stories you
+            want to come back to.
+          </p>
+
+          <Link
+            href="/articles"
+            className="mt-8 inline-flex rounded-xl bg-background px-6 py-3 font-semibold text-foreground shadow-sm transition hover:opacity-90"
+          >
+            Explore Articles
+          </Link>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

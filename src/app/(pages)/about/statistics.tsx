@@ -7,71 +7,82 @@ export default function Statistics() {
   const [stories, setStories] = useState(0);
   const [places, setPlaces] = useState(0);
 
-  const R = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [started, setStarted] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (!R.current || started) return;
+    if (!ref.current || started) return;
 
-      if (window.scrollY >= R.current.offsetTop - window.innerHeight / 1.2) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+
         setStarted(true);
+        observer.disconnect();
 
         const interval = setInterval(() => {
-          let count = 0;
+          let finished = 0;
+
           setViews((prev) => {
             if (prev >= 400) {
-              count++;
+              finished++;
               return 400;
             }
-            return prev + 4;
+
+            return Math.min(prev + 10, 400);
           });
 
           setStories((prev) => {
             if (prev >= 320) {
-              count++;
+              finished++;
               return 320;
             }
-            return prev + 2;
-          });
-          setPlaces((prev) => {
-            if (prev >= 250) {
-              count++;
-              return 250;
-            }
-            return prev + 2;
+
+            return Math.min(prev + 8, 320);
           });
 
-          if (count == 3) {
+          setPlaces((prev) => {
+            if (prev >= 250) {
+              finished++;
+              return 250;
+            }
+
+            return Math.min(prev + 6, 250);
+          });
+
+          if (finished === 3) {
             clearInterval(interval);
           }
         }, 50);
-      }
-    };
+      },
+      {
+        threshold: 0.3,
+      },
+    );
 
-    window.addEventListener("scroll", handleScroll);
+    observer.observe(ref.current);
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+    return () => observer.disconnect();
+  }, [started]);
+
   return (
     <div
-      ref={R}
-      className="statistics flex sm:justify-around gap-10 sm:gap-0 items-center  flex-col sm:flex-row mt-12 relative dark:z-1"
+      ref={ref}
+      className="statistics relative mt-12 flex flex-col items-center gap-10 sm:flex-row sm:justify-around sm:gap-0 dark:z-[1]"
     >
       <div className="text-center">
         <p className="text-4xl font-bold text-primary">{views}K</p>
-        <p className="font-light mt-2">Monthly Page Views</p>
+        <p className="mt-2 font-light">Monthly Page Views</p>
       </div>
+
       <div className="text-center">
         <p className="text-4xl font-bold text-primary">{stories}</p>
-        <p className="font-light mt-2">Written Stories</p>
+        <p className="mt-2 font-light">Written Stories</p>
       </div>
 
       <div className="text-center">
         <p className="text-4xl font-bold text-primary">{places}</p>
-        <p className="font-light mt-2">Places Reviewed</p>
+        <p className="mt-2 font-light">Places Reviewed</p>
       </div>
     </div>
   );

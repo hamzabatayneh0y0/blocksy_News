@@ -1,31 +1,41 @@
 "use client";
 
-import setTheme from "@/utils/setTheme";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
+import { Sun, Moon } from "lucide-react";
+import { useEffect, useState } from "react";
 
-export default function Theme() {
-  const router = useRouter();
-  const [dark, setDark] = useState(
-    document.documentElement.classList.contains("dark") ? true : false,
-  );
+export function ThemeToggle() {
+  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        className="cursor-pointer w-full"
+        aria-label="Toggle theme"
+      />
+    );
+  }
+
   return (
-    <div className="theme">
-      <h2 className=" text-3xl font-bold capitalize mb-4">Theme</h2>
-
-      <button
-        className={`w-25 h-8 bg-gray-100 rounded-full shadow-md p-1 relative  ${dark ? "bg-primary" : ""} duration-300`}
-      >
-        <div
-          onClick={() => {
-            const newTheme = !dark;
-            setDark(newTheme);
-            setTheme(newTheme);
-            router.refresh();
-          }}
-          className={`shadow-md bg-white absolute w-6 h-6 top-1/2  -translate-y-1/2 rounded-full duration-300 cursor-pointer ${dark ? "translate-17" : ""}`}
-        ></div>
-      </button>
-    </div>
+    <Button
+      variant="outline"
+      size="icon"
+      className="cursor-pointer w-full text-start"
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+    >
+      {resolvedTheme === "dark" ? (
+        <Sun className="size-4" />
+      ) : (
+        <Moon className="size-4" />
+      )}
+    </Button>
   );
 }

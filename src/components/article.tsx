@@ -1,91 +1,125 @@
 "use client";
-import { DOMAIN } from "@/utils/constants";
-import { NewArticle } from "@/utils/types";
-import axios from "axios";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+
+import Image from "next/image";
 import { useState } from "react";
-import { FaCheck, FaVoteYea } from "react-icons/fa";
-import { toast } from "react-toastify";
+import { Bookmark, Heart, Share2 } from "lucide-react";
 
-type ArticleProps = {
-  article: NewArticle;
-  userId: number | undefined;
-};
-export default function Articlecomponent({ article, userId }: ArticleProps) {
-  const [open, setOpen] = useState(false);
-  const router = useRouter();
+import { Button } from "@/components/ui/button";
+import ArticleTag from "./ArticleTag";
+import { Article } from "@/utils/types";
+import Link from "next/link";
 
-  const isBookmarked = article.bookmarks?.some(
-    (bookmark: any) => bookmark.userId === userId,
-  );
+export default function ArticleComponent({
+  tags,
+  likesCount,
+  savedCount,
+  title,
+  id,
+  description,
+  imageUrl,
+  createdAt,
+}: Article) {
+  const [likes, setLikes] = useState(likesCount);
+  const [saves, setSaves] = useState(savedCount);
 
-  async function handleSave() {
-    try {
-      await axios.post(`${DOMAIN}/api/articles/${article.id}/save`);
-      router.refresh();
-      toast.success(`Done`);
-    } catch (err: any) {
-      console.log(err.response?.data?.message);
-      toast.error(err.response?.data?.message);
+  const handleShare = async () => {
+    const url = `${window.location.origin}/articles/${id}`;
+
+    if (navigator.share) {
+      await navigator.share({
+        title,
+        text: description,
+        url,
+      });
+      return;
     }
-  }
+
+    await navigator.clipboard.writeText(url);
+  };
 
   return (
-    <div className="bg-white dark:bg-black p-5 rounded-md border shadow-md">
-      <div className="flex flex-col justify-center gap-1 items-end mb-4 relative p-1 ">
-        <div
-          className="cursor-pointer flex flex-col justify-center gap-1 relative z-2 p-1"
-          onClick={() => {
-            setOpen(!open);
-          }}
-        >
-          {" "}
-          <span className="w-1 h-1 rounded-full bg-gray-400  block"></span>
-          <span className="w-1 h-1 rounded-full bg-gray-400  block"></span>
-          <span className="w-1 h-1 rounded-full bg-gray-400  block"></span>
+    <article className="w-full overflow-hidden rounded-xl bg-card p-2">
+      <div className="flex flex-col gap-5  ">
+        {/* Image */}
+        <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg ">
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            className="object-cover object-center"
+            sizes="(max-width: 640px) 100vw, 700px"
+          />
         </div>
-        {open && (
-          <>
-            <div
-              className="inset-0 fixed "
-              onClick={() => {
-                setOpen(false);
-              }}
-            ></div>
-            <div
-              className={`shadow-md bg-white dark:bg-black dark:shadow-white rounded-md absolute top-full right-0`}
-            >
-              <p
-                onClick={async (e) => {
-                  setOpen(false);
-                  handleSave();
-                }}
-                className="capitalize font-light hover:text-primary p-2 cursor-pointer "
-              >
-                <FaVoteYea
-                  className={`${isBookmarked ? "text-primary" : ""} inline me-1`}
-                />
-                {isBookmarked ? "saved" : "save"}
-              </p>
+
+        {/* Content */}
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex-1">
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <span className="text-xs text-muted-foreground">
+                {new Date(createdAt).toLocaleDateString()}
+              </span>
             </div>
-          </>
-        )}
+            <Link
+              href={`/articles/${id}`}
+              title="Read the article"
+              className="block"
+            >
+              <h2 className="line-clamp-2 text-xl font-semibold tracking-tight">
+                {title}
+              </h2>
+            </Link>
+
+            <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted-foreground">
+              {description}
+            </p>
+
+            {/* Tags */}
+            {tags?.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <Link
+                    href={`/articles?searchText=${encodeURIComponent(tag)}`}
+                    key={tag}
+                  >
+                    <ArticleTag tag={tag} />
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Interaction */}
+          <div className="mt-5 flex items-center gap-1 border-t pt-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2  hover:bg-transparent hover:text-inherit"
+            >
+              <Heart className="size-4" fill={"none"} />
+              <span>{likes}</span>
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2 hover:bg-transparent hover:text-inherit"
+            >
+              <Bookmark className="size-4" fill={"none"} />
+              <span>{saves}</span>
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleShare}
+              className="ml-auto gap-2 cursor-pointer"
+            >
+              <Share2 className="size-4" />
+              <span className="hidden sm:inline">Share</span>
+            </Button>
+          </div>
+        </div>
       </div>
-      <h2
-        className="font-bold text-2xl lg:text-3xl hover:text-primary duration-300 line-clamp-1"
-        title="read more"
-      >
-        <Link href={`/articles/${article.id}  `}>
-          {article.title.toUpperCase()}
-        </Link>
-      </h2>
-      <p className="font-light my-5 lg:text-2xl line-clamp-1">
-        {article.description}
-      </p>
-      <span className="font-light block text-right text-sm">
-        {new Date(article.createdAt).toLocaleDateString()}
-      </span>
-    </div>
+    </article>
   );
 }

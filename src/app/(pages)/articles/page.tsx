@@ -1,17 +1,21 @@
-import { getArticles, getArticlesCount } from "@/apiCalls/articles";
-import Articlecomponent from "@/components/article";
-import { redirect } from "next/navigation";
-import style from "./articles.module.css";
-import Pagination from "./pagination";
-import { cookies } from "next/headers";
-import { verifyTokenForPage } from "@/utils/verifyToken";
-import { NewArticle } from "@/utils/types";
+import { getArticles } from "@/apiCalls/articles";
+import ArticleFilter from "@/components/AllArticlesFilter";
+import CategorySearch from "@/components/AllArticlesSearch";
+import ArticleComponent from "@/components/Article";
+import ArticlePagination from "@/components/Pagination";
 
+import { getArticlesProps } from "@/utils/types";
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
 type ArticlesProps = {
-  searchParams: Promise<{ pageNumber: string }>;
+  searchParams: Promise<{
+    pageNumber?: string;
+    searchText?: string;
+    sort?: string;
+  }>;
 };
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "All Articles",
   description:
     "Explore all articles on our platform. Read the latest insights, guides, and stories shared by our community.",
@@ -19,66 +23,97 @@ export const metadata = {
     title: "All Articles",
     description:
       "Discover the latest articles and trending topics from our platform.",
-    images: ["/public/next.svg"],
   },
 };
 
 export default async function Articles({ searchParams }: ArticlesProps) {
-  const token = (await cookies()).get("jwtToken")?.value || "";
-  const payload = verifyTokenForPage(token);
+  const params = await searchParams;
 
-  const { pageNumber } = await searchParams;
-  const articles = (await getArticles(pageNumber)) as NewArticle[];
-  const { count } = await getArticlesCount();
-  const pages = Math.ceil(count / 6);
-  const countArray = [];
-  for (let i = 0; i < pages; i++) {
-    countArray.push(i + 1);
+  const searchText = params.searchText ?? "";
+  const sort = params.sort ?? "latest";
+
+  const parsedPage = Number(params.pageNumber);
+
+  const pageNumber =
+    Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+
+  const data = (await getArticles(
+    sort,
+    searchText,
+    pageNumber.toString(),
+  )) as getArticlesProps;
+
+  const pages = data?.totalPages;
+
+  if (pages > 0 && pageNumber > pages) {
+    notFound();
   }
 
-  const handleSearch = async (form: FormData) => {
-    "use server";
-    const search = form.get("search")?.toString();
-
-    redirect(`/articles/search?searchText=${search}`);
-  };
   return (
-    <div className=" py-12 px-5 flex-1">
-      <h2 className="font-bold text-3xl md:text-4xl mb-12">
-        All <span className="text-primary">Articles</span>
-      </h2>
-      <form
-        action={handleSearch}
-        className="my-5 flex gap-2 flex-col sm:flex-row sm:justify-between  "
-      >
-        <input
-          required
-          type="search"
-          name="search"
-          placeholder="search"
-          className="p-3 border rounded-md inset-shadow-2xs shadow-black bg-white w-full dark:bg-black dark:inset-shadow-white"
-        />
-        <button
-          type="submit"
-          className="bg-primary text-white font-light rounded-md p-2  capitalize block mt-2 w-fit hover:text-primary hover:bg-white duration-300 cursor-pointer shadow-xl "
-        >
-          search
-        </button>
-      </form>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
-        {articles.map((article, i) => {
-          return (
-            <div
-              key={article.id}
-              className={`opacity-0 animate-fadeIn ${style[`delay-${i}`]}`}
-            >
-              <Articlecomponent article={article} userId={payload?.id} />
-            </div>
-          );
-        })}
-      </div>
+    <main className="flex-1 py-12">
+      <div className="mx-auto w-full max-w-7xl">
+        {/* Header */}
+        <div className="mb-10">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            All <span className="text-primary">Articles</span>
+          </h1>
 
-      <Pagination countArray={countArray} pageNumber={pageNumber} />
-    </div>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Explore the latest articles and discover interesting topics.
+          </p>
+        </div>
+        {/* Search + Filter */}
+        <div className="mb-8 flex flex-col gap-4 rounded-2xl border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
+          <CategorySearch initialSearch={searchText} currentSort={sort} />
+          <ArticleFilter currentSort={sort} searchText={searchText} />
+        </div>
+        {/* Results information */}
+        <div className="mb-6 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground font-bold">
+            {data.totalArticles}{" "}
+            {data.totalArticles === 1 ? "article" : "articles"} found
+          </p>
+
+          {(searchText || sort !== "latest") && (
+            <a
+              href="/articles"
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              Clear filters
+            </a>
+          )}
+        </div>
+        data
+        {/* Articles */}
+        {data.articles.length > 0 ? (
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {data.articles.map((article) => (
+              <ArticleComponent key={article.id} {...article} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex min-h-64 items-center justify-center rounded-2xl border border-dashed">
+            <div className="text-center">
+              <h2 className="text-lg font-semibold">No articles found</h2>
+
+              <p className="mt-1 text-sm text-muted-foreground">
+                Try changing your search or filter.
+              </p>
+            </div>
+          </div>
+        )}
+        {/* Pagination */}
+        {pages > 1 && (
+          <div className="mt-12">
+            <ArticlePagination
+              currentPage={pageNumber}
+              lastIndex={pages}
+              searchText={searchText}
+              sort={sort}
+            />
+          </div>
+        )}
+      </div>
+    </main>
   );
 }

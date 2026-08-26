@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/utils/db';
+import prisma from '@/lib/db';
+import { ARTICLE_PER_PAGE } from '@/utils/constants';
 
 
 /**
@@ -11,10 +12,14 @@ import prisma from '@/utils/db';
 export async function GET(request: NextRequest) {
     try {
         const count = await prisma.article.count();
-        return NextResponse.json({ count }, { status: 200 });
-    } catch (error) {
+        return NextResponse.json({ count, 
+      totalPages: Math.ceil(count / ARTICLE_PER_PAGE),
+       }, { status: 200 });
+    } catch (error:any) {
+          console.error("getArticlesCountError",error);
         return NextResponse.json(
-            { message: 'internal server error' },
+
+            { message: "something went wrong" },
             { status: 500 }
         );
     }

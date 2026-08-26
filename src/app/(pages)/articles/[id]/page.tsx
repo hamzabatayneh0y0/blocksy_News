@@ -1,61 +1,82 @@
-import { getSingleArticles } from "@/apiCalls/articles";
-import Comment from "@/components/comment";
-import type { SingleArticle } from "@/utils/types";
-import CommentForm from "./commentForm";
-import { cookies } from "next/headers";
-import { verifyTokenForPage } from "@/utils/verifyToken";
-import LikeButton from "./likebutton";
-import getTheme from "@/utils/getTheme";
-import SingleArticleComponent from "@/components/SingleArticleComponent";
+import { getSingleArticle } from "@/apiCalls/articles";
+import { auth } from "@/auth";
+import AdminInterAtions from "@/components/AdminInterActions";
+import ArticleComments from "@/components/ArticleComments";
+import ArticleInteractions from "@/components/ArticleInteractions";
+import Recommendations from "@/components/recommendationsResult";
+import { Pencil, Trash2 } from "lucide-react";
+import Image from "next/image";
+import { notFound } from "next/navigation";
 
-type SingleArticleProps = {
-  params: Promise<{ id: string }>;
-};
-
-export async function generateMetadata({ params }: SingleArticleProps) {
-  const { id } = await params;
-  const article = await getSingleArticles(id);
-
-  return {
-    title: article.title,
-    description: article.description,
-    openGraph: {
-      title: article.title,
-      description: article.description,
-      images: [article.image],
-    },
-  };
+interface Props {
+  params: Promise<{
+    id: string;
+  }>;
 }
 
-export default async function SingleArticle({ params }: SingleArticleProps) {
+export default async function SingleArticlePage({ params }: Props) {
   const { id } = await params;
-  const token = (await cookies()).get("jwtToken")?.value || "";
-  const payload = verifyTokenForPage(token);
-  const article = (await getSingleArticles(id.toString())) as SingleArticle;
-  const theme = await getTheme();
+  const session = await auth();
+  const data = await getSingleArticle(id);
+
+  if (!data) {
+    notFound();
+  }
+
+  const { articleResult, recommendationsResult } = data;
 
   return (
-    <div className="py-12 px-5 flex-1">
-      <SingleArticleComponent article={article} userId={payload?.id} />
-      <div className="mt-12 flex gap-1 items-center bg-white shadow-md p-5 border rounded-md w-fit  dark:bg-black dark:shadow-white">
-        <span className="text-2xl"> {article.likes.length}</span>
-        <LikeButton article={article} userId={payload?.id} />
-      </div>
-      <div className="py-12">
-        <CommentForm id={article.id} />
-      </div>
-      <div className="comments flex flex-col gap-3">
-        {article.comments.map((comment: any) => {
-          return (
-            <Comment
-              key={comment.id}
-              comment={comment}
-              theme={theme}
-              userId={payload?.id.toString()}
+    <main className="mx-auto w-full  py-12">
+      {/* Article */}
+      <section className="rounded-xl bg-card p-4 sm:p-6">
+        <article>
+          <div className="relative aspect-[16/8] w-full overflow-hidden rounded-2xl">
+            <Image
+              src={articleResult.imageUrl}
+              alt={articleResult.title}
+              fill
+              priority
+              quality={80}
+              className="object-cover object-center"
             />
-          );
-        })}
-      </div>
-    </div>
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+          </div>
+
+          <div className="mt-6">
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              {articleResult.title}
+            </h1>
+
+            <p className="mt-3 text-sm text-muted-foreground">
+              {new Date(articleResult.createdAt).toLocaleDateString()}
+            </p>
+
+            <p className="mt-6 leading-8 text-muted-foreground">
+              {articleResult.description}
+            </p>
+          </div>
+
+          <ArticleInteractions articleId={articleResult.id} />
+
+          {session?.user.isAdmin && (
+            <AdminInterAtions article={articleResult} />
+          )}
+        </article>
+      </section>
+
+      {/* Comments */}
+      <section className="mt-8">
+        <ArticleComments
+          articleId={Number(id)}
+          currentUserId={Number(session?.user.id)}
+        />
+      </section>
+
+      {/* Recommendations */}
+      <section className="mt-8">
+        <Recommendations recommendations={recommendationsResult} />
+      </section>
+    </main>
   );
 }

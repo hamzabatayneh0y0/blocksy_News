@@ -1,65 +1,74 @@
-import { LoginUserDto } from '@/utils/dtos';
-import { loginSchema } from '@/utils/validationSchemas';
-import { NextResponse, NextRequest } from 'next/server';
-import prisma from '@/utils/db';
-import bcrypt from 'bcryptjs';
-import { setCookie } from '@/utils/generateToken';
+// import { LoginUserDto } from "@/utils/dtos";
+// import prisma from "@/lib/db";
+// import { NextResponse, NextRequest } from "next/server";
 
+// import { LogInRateLimit } from "@/utils/loginratelimite";
+// import { signIn } from "@/auth";
+// import { AuthError } from "next-auth";
+// import { createVerificationToken } from "@/utils/generateVerifycationToken";
+// import { sendVerificationEmail } from "@/utils/ٍsendVerifycationEmail";
 
-/**
- *  @method  POST
- *  @route   ~/api/users/login
- *  @desc    Login User [(Log In) (Sign In) (تسجیل الدخول)]
- *  @access  public
- */
-export async function POST(request: NextRequest) {
-    try {
-        
-      
+// /**
+//  *  @method  POST
+//  *  @route   ~/api/users/login
+//  *  @desc    Login User [(Log In) (Sign In) (تسجیل الدخول)]
+//  *  @access  public
+//  */
+// export async function POST(request: NextRequest) {
+//   try {
+//     const body = (await request.json()) as LoginUserDto;
+//     const allowed = await LogInRateLimit( body.email);
 
-        const body = await request.json() as LoginUserDto;
-        const validation = loginSchema.safeParse(body);
-        if (!validation.success) {
-            return NextResponse.json(
-                { message: validation.error.errors[0].message },
-                { status: 400 }
-            );
-        }
+//     if (!allowed) {
+//       return Response.json(
+//         { message: "Too many requests, please try again later" },
+//         { status: 429 },
+//       );
+//     }
 
-        const user = await prisma.user.findUnique({ where: { email: body.email } });
-        if (!user) {
-            return NextResponse.json(
-                { message: 'invalid email or password' },
-                { status: 400 }
-            )
-        }
+//     try {
+//       await signIn("credentials", { ...body, redirect: false });
 
-        const isPasswordMatch = await bcrypt.compare(body.password, user.password);
-        if (!isPasswordMatch) {
-            return NextResponse.json(
-                { message: 'invalid email or password' },
-                { status: 400 }
-            );
-        }
+//       return NextResponse.json(
+//         { message: "Login successful", ok: true },
+//         {
+//           status: 200,
+//         },
+//       );
+//     } catch (error: any) {
+    
+//       if (error instanceof AuthError) {
+//          console.log("Error login signin:" ,error.cause?.err?.message)
+//         if (error.cause?.err?.message === "EMAIL_NOT_VERIFIED") {
+//           const { email, token } = await createVerificationToken(body.email);
 
-        const cookie = setCookie({
-            id: user.id,
-            isAdmin: user.isAdmin,
-            username: user.username
-        });
+//           console.log("login route token , email:", token, email);
+//           const emailRes = await sendVerificationEmail(email, token);
 
-        return NextResponse.json(
-            { message: 'Authenticated' },
-            {
-                status: 200,
-                headers: { "Set-Cookie": cookie }
-            }
-        )
+//           return NextResponse.json(
+//             {
+//               message:
+//                 "We've sent a verification email. Please verify your account within 2 minutes.",
+//               ok: false,
+//             },
+//             {
+//               status: 200,
+//             },
+//           );
+//         }
+//         return NextResponse.json(
+//           { message: error.cause?.err?.message ?? "Login failed" },
+//           { status: 400 },
+//         );
+//       }
+//       throw new Error(error.message);
+//     }
+//   } catch (error: any) {
+//          console.log("Error login catch:" ,error.message)
 
-    } catch (error) {
-        return NextResponse.json(
-            { message: 'internal server error' },
-            { status: 500 }
-        )
-    }
-}
+//     return NextResponse.json(
+//       { message: "Something Went Wrong" },
+//       { status: 500 },
+//     );
+//   }
+// }

@@ -1,16 +1,28 @@
 "use client";
+
 import Link from "next/link";
 import style from "./header.module.css";
 import { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
-import { JwtPayload } from "jsonwebtoken";
-import { DOMAIN } from "@/utils/constants";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-export default function Nav({ payload }: { payload: JwtPayload | null }) {
+import { LogOutAction } from "@/actions/logOutAction";
+import { Session } from "next-auth";
+import Image from "next/image";
+import { ThemeToggle } from "./Theme";
+import { NotificationBell } from "./Notification";
+
+export default function Nav({ session }: { session: Session | null }) {
   const route = useRouter();
+  const image = session?.user?.image;
+
+  const optimizedImage = image?.includes("res.cloudinary.com")
+    ? image.replace("/upload/", "/upload/q_auto,f_auto/")
+    : image ||
+      "/images/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.avif";
+
   const [open, setOpen] = useState(false);
+
   useEffect(() => {
     const handleResize = () => {
       setOpen(false);
@@ -25,240 +37,593 @@ export default function Nav({ payload }: { payload: JwtPayload | null }) {
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "auto";
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
   }, [open]);
 
   async function handleLogout() {
-    try {
-      await axios.get(`${DOMAIN}/api/users/logout`);
+    const res = await LogOutAction();
+
+    if (res?.ok) {
       route.refresh();
-    } catch (err: any) {
-      console.log(err);
-      toast.error(err?.response?.data?.message);
+    } else {
+      toast.error(res?.message || "Logout failed");
     }
   }
+  const closeMenu = () => setOpen(false);
+
   return (
     <>
-      <ul className={`hidden lg:flex  lg:flex-row lg:gap-5 duration-300  `}>
+      {/* =========================
+          Desktop Navigation
+      ========================= */}
+      <ul
+        className="
+          hidden
+          lg:flex
+          items-center
+          gap-6
+          text-foreground
+        "
+      >
         <IoClose
-          className="lg:hidden text-primary cursor-pointer text-2xl hover:text-white duration-300"
-          onClick={() => {
-            setOpen(false);
-          }}
+          className="
+            hidden
+            cursor-pointer
+            text-2xl
+            text-foreground
+            transition-colors
+            hover:text-primary
+          "
+          onClick={closeMenu}
         />
-        <li className={`${style.pages} not-lg:mt-12`}>
-          <span className=" hover:text-primary duration-300">pages</span>
-          <div className="flex flex-col gap-5 py-3 px-2 rounded-md lg:absolute lg:bg-white shadow-md  lg:left-0 lg:top-25 lg:duration-300 lg:invisible lg:w-25 lg:dark:bg-black dark:shadow-white z-9">
+
+        {/* Pages */}
+        <li className={`${style.pages} group relative cursor-pointer`}>
+          <span
+            className="
+              capitalize
+              text-foreground
+              transition-colors
+              hover:text-primary
+            "
+          >
+            pages
+          </span>
+
+          <div
+            className="
+              invisible
+              absolute
+              left-0
+                translate-y-2
+              top-full
+              z-50
+              mt-3
+              flex
+              w-32
+              flex-col
+              gap-1
+              rounded-lg
+              border
+              border-border
+              bg-card
+              p-2
+              opacity-0
+              shadow-lg
+              transition-all
+              duration-300
+              group-hover:visible
+              group-hover:opacity-100
+              group-hover:translate-y-0
+            "
+          >
             <Link
-              className="border-b py-2 hover:text-primary duration-300"
-              href={"/articles?pageNumber=1"}
+              href="/articles?pageNumber=1"
+              className="
+                rounded-md
+                px-3
+                py-2
+                text-sm
+                text-card-foreground
+                transition-colors
+                hover:bg-accent
+                hover:text-accent-foreground
+              "
             >
               articles
             </Link>
-            {payload?.isAdmin && (
+
+            {session?.user?.isAdmin && (
               <Link
-                className="border-b py-2 hover:text-primary duration-300"
-                href={"/admin"}
+                href="/admin"
+                className="
+                  rounded-md
+                  px-3
+                  py-2
+                  text-sm
+                  text-card-foreground
+                  transition-colors
+                  hover:bg-accent
+                  hover:text-accent-foreground
+                "
               >
                 admin
               </Link>
             )}
           </div>
         </li>
-        <li className="capitalize hover:text-primary duration-300 cursor-pointer">
-          <Link href={"/about"}>about us</Link>
-        </li>
-        <li className="capitalize hover:text-primary duration-300 cursor-pointer">
+
+        {/* About */}
+        <li className="cursor-pointer capitalize">
           <Link
-            className="bg-primary px-3 py-1 rounded-sm text-white"
-            href={"/contact"}
+            href="/about"
+            className="
+              text-foreground
+              transition-colors
+              hover:text-primary
+            "
+          >
+            about us
+          </Link>
+        </li>
+
+        {/* Contact */}
+        <li className="cursor-pointer capitalize">
+          <Link
+            href="/contact"
+            className="
+              rounded-md
+              bg-primary
+              px-3
+              py-1.5
+              text-sm
+              font-medium
+              text-primary-foreground
+              shadow-sm
+              transition-all
+              hover:opacity-90
+            "
           >
             contact us
           </Link>
         </li>
-        <li className="capitalize max-w-[148px] flex">
-          {payload ? (
-            <>
-              <Link
-                className=" hover:text-primary duration-300 cursor-pointer font-bold truncate"
-                href={`/profile/${payload?.id}`}
+
+        {/* User */}
+        <li className="flex   items-center gap-2">
+          {session?.user?.id && <NotificationBell navOpen={false} />}
+
+          {session?.user ? (
+            <div className="group relative cursor-pointer pb-1">
+              <div
+                className="
+                  relative
+                  h-10
+                  w-10
+                  overflow-hidden
+                  rounded-full
+                  border
+                  border-border
+                  bg-muted
+                "
               >
-                {payload?.username}
-              </Link>
-              <span className="mx-1">/</span>
-              <Link
-                onClick={handleLogout}
-                className=" hover:text-primary duration-300 cursor-pointer  ms-1"
-                href={""}
+                <Image
+                  src={optimizedImage}
+                  alt="avatar"
+                  fill
+                  className="object-cover object-center"
+                  sizes="100px"
+                />
+              </div>
+
+              {/* User Dropdown */}
+              <div
+                className="
+                  invisible
+                  absolute
+                  right-0
+                  top-full
+                  z-50
+                  mt-2
+                  w-44
+                  translate-y-2
+                  rounded-xl
+                  border
+                  border-border
+                  bg-card
+                  p-2
+                  opacity-0
+                  shadow-lg
+                  transition-all
+                  duration-300
+                  ease-out
+                  group-hover:visible
+                  group-hover:translate-y-0
+                  group-hover:opacity-100
+                "
               >
-                logout
-              </Link>
-            </>
+                <Link
+                  href={`/profile`}
+                  className="
+                    flex
+                    items-center
+                    rounded-md
+                    border-b
+                    border-border
+                    px-3
+                    py-2
+                    text-sm
+                    my-1
+                    text-card-foreground
+                    transition-colors
+                    hover:bg-accent
+                    hover:text-accent-foreground
+                  "
+                >
+                  Profile
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="
+                    flex
+                    w-full
+                    my-1
+                    cursor-pointer
+                    items-center
+                    rounded-md
+                    px-3
+                    py-2
+                    text-left
+                    text-sm
+                    text-destructive
+                    transition-colors
+                    hover:bg-destructive/10
+                  "
+                >
+                  Logout
+                </button>
+                <div
+                  className="
+                   flex
+                    items-center
+                    rounded-md
+                    border-b
+                    border-border
+                    px-3
+                    py-2
+                    text-sm
+                    text-card-foreground
+                    transition-colors
+                    hover:bg-accent
+                    hover:text-accent-foreground
+                  "
+                >
+                  <ThemeToggle />
+                </div>
+              </div>
+            </div>
           ) : (
-            <>
+            <div className="flex items-center text-sm">
               <Link
-                className=" hover:text-primary duration-300 cursor-pointer"
-                href={"/login"}
+                href="/login"
+                className="
+                  text-foreground
+                  transition-colors
+                  hover:text-primary
+                "
               >
                 login
               </Link>
-              <span className="mx-1">/</span>
+
+              <span className="mx-1.5 text-muted-foreground">/</span>
+
               <Link
-                className=" hover:text-primary duration-300 cursor-pointer"
-                href={"/register"}
+                href="/register"
+                className="
+                  text-foreground
+                  transition-colors
+                  hover:text-primary
+                "
               >
                 register
               </Link>
-            </>
+            </div>
           )}
         </li>
       </ul>
+
+      {/* =========================
+          Mobile Menu Trigger
+      ========================= */}
       <input
         type="checkbox"
         className={`hidden ${style.inp}`}
         id="burger"
         checked={open}
-        onChange={() => {
-          setOpen(!open);
-        }}
+        onChange={() => setOpen(!open)}
       />
+
       <label
         htmlFor="burger"
-        className={`${style.burger} lg:hidden cursor-pointer`}
+        className={`${style.burger} cursor-pointer lg:hidden`}
       >
-        <span className={`cursor-pointer ${style.bar}`}></span>
-        <span className={`cursor-pointer ${style.bar}`}></span>
-        <span className={`cursor-pointer ${style.bar}`}></span>
+        <span className={`cursor-pointer ${style.bar}`} />
+        <span className={`cursor-pointer ${style.bar}`} />
+        <span className={`cursor-pointer ${style.bar}`} />
       </label>
-      <div
-        className={`not-lg:fixed not-lg:top-0 not-lg:left-0 not-lg:w-full not-lg:h-full z-1 ${open ? "" : "hidden"} `}
-        onClick={() => {
-          setOpen(false);
-        }}
-      ></div>
 
+      {/* =========================
+          Mobile Overlay
+      ========================= */}
+      <div
+        className={`
+          fixed
+          inset-0
+          z-40
+          bg-background/60
+          backdrop-blur-sm
+          transition-opacity
+          duration-300
+          lg:hidden
+          ${open ? "opacity-100" : "pointer-events-none opacity-0"}
+        `}
+        onClick={closeMenu}
+      />
+
+      {/* =========================
+          Mobile Navigation
+      ========================= */}
       <ul
-        className={` flex lg:hidden flex-col gap-8 bg-black/90 text-white not-lg:px-3  not-lg:py-5  not-lg:fixed not-lg:top-0 not-lg:-right-75 duration-300 not-lg:h-screen w-50 sm:w-75 not-lg:z-50 ${open ? "not-lg:-translate-x-75 shadow-2xl dark:shadow-white" : ""} `}
+        className={`
+          fixed
+          right-0
+          top-0
+          z-50
+          flex
+          h-screen
+          w-72
+          max-w-[85vw]
+          flex-col
+          gap-6
+          border-l
+          border-border
+          bg-card
+          px-5
+          py-5
+          text-card-foreground
+          shadow-2xl
+          transition-transform
+          duration-300
+          lg:hidden
+          ${open ? "translate-x-0" : "translate-x-full"}
+        `}
       >
-        <IoClose
-          className="lg:hidden text-white cursor-pointer text-2xl hover:text-primary duration-300"
-          onClick={() => {
-            setOpen(false);
-          }}
-        />
-        <li className={`${style.pages} not-lg:mt-12`}>
-          <span className=" hover:text-primary duration-300">pages</span>
-          <div className="flex flex-col gap-5 py-3 px-2 rounded-md lg:absolute lg:bg-white shadow-md lg:left-0 lg:top-25 lg:duration-300 lg:invisible lg:w-25">
+        {/* Close */}
+        <li className="flex justify-between items-center ">
+          <div className="flex gap-2">
+            {session?.user && (
+              <div className="flex h-8 w-8 items-center justify-center">
+                <NotificationBell navOpen={open} />
+              </div>
+            )}
+            <div className="w-8 h-8">
+              <ThemeToggle />
+            </div>
+          </div>
+          <div className="">
+            <IoClose
+              className="
+              cursor-pointer
+              text-2xl
+              text-muted-foreground
+              transition-colors
+              hover:text-primary
+            "
+              onClick={closeMenu}
+            />
+          </div>
+        </li>
+
+        {/* Pages */}
+        <li className={`${style.pages} relative `}>
+          <span
+            className="
+              capitalize
+              text-card-foreground
+              transition-colors
+              hover:text-primary
+            "
+          >
+            pages
+          </span>
+
+          <div className="mt-3 flex flex-col gap-1 border-l border-border pl-3">
             <Link
-              onClick={() => {
-                setOpen(false);
-              }}
-              className="border-b py-2 hover:text-primary duration-300"
-              href={"/articles?pageNumber=1"}
+              onClick={closeMenu}
+              href="/articles?pageNumber=1"
+              className="
+                rounded-md
+                px-3
+                py-2
+                text-sm
+                text-muted-foreground
+                transition-colors
+                hover:bg-accent
+                hover:text-accent-foreground
+              "
             >
               articles
             </Link>
-            {payload?.isAdmin && (
+
+            {session?.user?.isAdmin && (
               <>
                 <Link
-                  onClick={() => {
-                    setOpen(false);
-                  }}
-                  className="border-b py-2 hover:text-primary duration-300"
-                  href={"/admin"}
+                  onClick={closeMenu}
+                  href="/admin"
+                  className="
+                    rounded-md
+                    px-3
+                    py-2
+                    text-sm
+                    text-muted-foreground
+                    transition-colors
+                    hover:bg-accent
+                    hover:text-accent-foreground
+                  "
                 >
                   admin
-                </Link>
-
-                <Link
-                  onClick={() => {
-                    setOpen(false);
-                  }}
-                  className="border-b py-2 hover:text-primary duration-300"
-                  href={"/admin/articles?pageNumber=1"}
-                >
-                  admine articles
-                </Link>
-
-                <Link
-                  onClick={() => {
-                    setOpen(false);
-                  }}
-                  className="border-b py-2 hover:text-primary duration-300"
-                  href={"/admin/comments"}
-                >
-                  comments
                 </Link>
               </>
             )}
           </div>
         </li>
-        <li className="capitalize hover:text-primary duration-300 cursor-pointer">
+
+        {/* About */}
+        <li className="cursor-pointer capitalize">
           <Link
-            onClick={() => {
-              setOpen(false);
-            }}
-            href={"/about"}
+            onClick={closeMenu}
+            href="/about"
+            className="
+              text-card-foreground
+              transition-colors
+              hover:text-primary
+            "
           >
             about us
           </Link>
         </li>
-        <li className="capitalize hover:text-primary duration-300 cursor-pointer">
+
+        {/* Contact */}
+        <li className="cursor-pointer capitalize">
           <Link
-            onClick={() => {
-              setOpen(false);
-            }}
-            className="bg-primary px-3 py-1 rounded-sm text-white"
-            href={"/contact"}
+            onClick={closeMenu}
+            href="/contact"
+            className="
+              inline-flex
+              rounded-md
+              bg-primary
+              px-4
+              py-2
+              text-sm
+              font-medium
+              text-primary-foreground
+              shadow-sm
+              transition-all
+              hover:opacity-90
+            "
           >
             contact us
           </Link>
         </li>
-        <li className="capitalize max-w-[148px] flex">
-          {payload ? (
-            <>
-              <Link
-                onClick={() => {
-                  setOpen(false);
-                }}
-                className=" hover:text-primary duration-300 cursor-pointer font-bold truncate"
-                href={`/profile/${payload?.id}`}
+
+        {/* User */}
+        <li className="flex w-full capitalize">
+          {session?.user ? (
+            <div className="group relative w-full cursor-pointer">
+              <div
+                className="
+                  relative
+                  h-10
+                  w-10
+                  overflow-hidden
+                  rounded-full
+                  border
+                  border-border
+                  bg-muted
+                "
               >
-                {payload?.username}
-              </Link>
-              <span className="mx-1">/</span>
-              <Link
-                onClick={async () => {
-                  handleLogout();
-                  setOpen(false);
-                }}
-                className=" hover:text-primary duration-300 cursor-pointer  ms-1"
-                href={""}
+                <Image
+                  src={optimizedImage}
+                  alt="avatar"
+                  fill
+                  className="object-cover object-center"
+                  sizes="100px"
+                />
+              </div>
+
+              <div
+                className="
+                  max-h-0
+                  overflow-hidden
+                  px-0
+                  opacity-0
+                  transition-all
+                  duration-300
+                  ease-out
+                  group-hover:max-h-40
+                  group-hover:py-3
+                  group-hover:opacity-100
+                "
               >
-                logout
-              </Link>
-            </>
+                <Link
+                  href={`/profile`}
+                  className="
+                    block
+                    border-b
+                    border-border
+                    py-2
+                    text-sm
+                    text-card-foreground
+                    transition-colors
+                    hover:border-primary
+                    hover:text-primary
+                  "
+                  onClick={closeMenu}
+                >
+                  Profile
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="
+                    block
+                    w-full
+                    cursor-pointer
+                    border-b
+                    border-border
+                    py-2
+                    text-left
+                    text-sm
+                    text-destructive
+                    transition-colors
+                    hover:border-destructive
+                  "
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
           ) : (
-            <>
+            <div className="flex items-center text-sm">
               <Link
-                onClick={() => {
-                  setOpen(false);
-                }}
-                className=" hover:text-primary duration-300 cursor-pointer"
-                href={"/login"}
+                onClick={closeMenu}
+                href="/login"
+                className="
+                  text-card-foreground
+                  transition-colors
+                  hover:text-primary
+                "
               >
                 login
               </Link>
-              <span className="mx-1">/</span>
+
+              <span className="mx-1.5 text-muted-foreground">/</span>
+
               <Link
-                onClick={() => {
-                  setOpen(false);
-                }}
-                className=" hover:text-primary duration-300 cursor-pointer"
-                href={"/register"}
+                onClick={closeMenu}
+                href="/register"
+                className="
+                  text-card-foreground
+                  transition-colors
+                  hover:text-primary
+                "
               >
                 register
               </Link>
-            </>
+            </div>
           )}
         </li>
       </ul>

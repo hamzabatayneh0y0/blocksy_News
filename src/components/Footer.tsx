@@ -12,121 +12,278 @@ import { TbWorldWww } from "react-icons/tb";
 
 export default function Footer() {
   return (
-    <div className="bg-gray-100 p-5 shadow-2xl dark:shadow-white dark:bg-black">
-      <div className="scial flex gap-2 my-4 flex-wrap text-2xl">
-        <Link href={"/"}>
+    <footer
+      className="
+        border-t
+        border-border
+        bg-card
+        px-5
+        py-8
+        text-card-foreground
+        shadow-2xl
+      "
+    >
+      {/* Social Links */}
+      <div className="my-4 flex flex-wrap gap-3 text-2xl">
+        <Link
+          href="/"
+          className="text-muted-foreground transition-colors hover:text-primary"
+        >
           <FaFacebook />
         </Link>
-        <Link href={"/"}>
-          {" "}
+
+        <Link
+          href="/"
+          className="text-muted-foreground transition-colors hover:text-primary"
+        >
           <FaInstagramSquare />
         </Link>
-        <Link href={"/"}>
-          {" "}
+
+        <Link
+          href="/"
+          className="text-muted-foreground transition-colors hover:text-primary"
+        >
           <FaYoutube />
         </Link>
-        <Link href={"/"}>
-          {" "}
+
+        <Link
+          href="/"
+          className="text-muted-foreground transition-colors hover:text-primary"
+        >
           <FaPinterest />
         </Link>
-        <Link href={"/"}>
-          {" "}
+
+        <Link
+          href="/"
+          className="text-muted-foreground transition-colors hover:text-primary"
+        >
           <FaSquareXTwitter />
         </Link>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
+
+      {/* Main Content */}
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {/* About Us */}
         <div>
-          <h3 className="font-bold capitalize mb-4">about us</h3>
-          <ul>
-            <li className="font-light text-gray-900 dark:text-gray-300 ">
-              <Link href="about " className="hover:text-primary deuration-300">
+          <h3 className="mb-4 font-bold capitalize text-foreground">
+            about us
+          </h3>
+
+          <ul className="space-y-2">
+            <li>
+              <Link
+                href="about"
+                className="
+                  font-light
+                  text-muted-foreground
+                  transition-colors
+                  hover:text-primary
+                "
+              >
                 About Organization
               </Link>
             </li>
-            <li className="text-gray-900  font-light dark:text-gray-300 ">
-              <Link href="/" className="hover:text-primary deuration-300">
+
+            <li>
+              <Link
+                href="/"
+                className="
+                  font-light
+                  text-muted-foreground
+                  transition-colors
+                  hover:text-primary
+                "
+              >
                 Our Clients
               </Link>
             </li>
-            <li className="text-gray-900 font-light dark:text-gray-300 ">
-              <Link href="/" className="hover:text-primary deuration-300">
+
+            <li>
+              <Link
+                href="/"
+                className="
+                  font-light
+                  text-muted-foreground
+                  transition-colors
+                  hover:text-primary
+                "
+              >
                 Our Partners
               </Link>
             </li>
           </ul>
         </div>
+
+        {/* Useful Information */}
         <div>
-          <h3 className="font-bold capitalize mb-4">Useful Information</h3>
-          <p className="text-gray-900 dark:text-gray-300 font-light mb-4">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae
-            accusamus necessitatibus optio
-          </p>
-          <p className="text-gray-900 dark:text-gray-300   font-light">
-            nisi mollitia magni soluta assumenda voluptatum repudiandae fuga
-            itaque expedita, officiis voluptas atque, explicabo aut rerum
-            sapiente esse?
-          </p>
+          <h3 className="mb-4 font-bold capitalize text-foreground">
+            Useful Information
+          </h3>
+
+          <div className="space-y-4">
+            <p className="font-light leading-relaxed text-muted-foreground">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae
+              accusamus necessitatibus optio
+            </p>
+
+            <p className="font-light leading-relaxed text-muted-foreground">
+              nisi mollitia magni soluta assumenda voluptatum repudiandae fuga
+              itaque expedita, officiis voluptas atque, explicabo aut rerum
+              sapiente esse?
+            </p>
+          </div>
         </div>
+
+        {/* Contact Info */}
         <div>
-          <h3 className="font-bold capitalize mb-4">Contact Info</h3>
-          <p className="text-gray-900 dark:text-gray-300  font-light mb-4">
+          <h3 className="mb-4 font-bold capitalize text-foreground">
+            Contact Info
+          </h3>
+
+          <p className="mb-5 font-light leading-relaxed text-muted-foreground">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae
             accusamus necessitatibus optio
           </p>
-          <ul className="">
-            <li className="text-gray-900 dark:text-gray-300  font-light flex items-center flex-wrap gap-1 mt-3">
-              <span className="p-4 block w-fit rounded-full bg-gray-300">
-                <FaLocationDot className="text-gray-900" />
+
+          <ul className="space-y-4">
+            {/* Address */}
+            <li className="flex flex-wrap items-center gap-3">
+              <span
+                className="
+                  flex
+                  h-12
+                  w-12
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-accent
+                  text-accent-foreground
+                "
+              >
+                <FaLocationDot />
               </span>
-              <div className="text text-[14px]">
-                <h4 className="font-bold">Address:</h4>
-                <p className="hover:text-primary deuration-300">
+
+              <div className="text-sm">
+                <h4 className="font-bold text-foreground">Address:</h4>
+
+                <p
+                  className="
+                    font-light
+                    text-muted-foreground
+                    transition-colors
+                    hover:text-primary
+                  "
+                >
                   Street Name, NY 38954
                 </p>
               </div>
             </li>
-            <li className="text-gray-900 dark:text-gray-300  font-light flex items-center gap-1 flex-wrap mt-3">
-              <span className="p-4 block w-fit  rounded-full bg-gray-300">
-                <FaPhoneAlt className="text-gray-900" />
+
+            {/* Phone */}
+            <li className="flex flex-wrap items-center gap-3">
+              <span
+                className="
+                  flex
+                  h-12
+                  w-12
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-accent
+                  text-accent-foreground
+                "
+              >
+                <FaPhoneAlt />
               </span>
-              <div className="text text-[14px]">
-                <h4 className="font-bold">Phone:</h4>
+
+              <div className="text-sm">
+                <h4 className="font-bold text-foreground">Phone:</h4>
+
                 <p>
                   <Link
-                    className="hover:text-primary deuration-300"
-                    href={"tel:"}
+                    className="
+                      font-light
+                      text-muted-foreground
+                      transition-colors
+                      hover:text-primary
+                    "
+                    href="tel:"
                   >
                     578-393-4937
                   </Link>
                 </p>
               </div>
             </li>
-            <li className="text-gray-900 dark:text-gray-300   font-light flex items-center gap-1 flex-wrap mt-3">
-              <span className="p-4  block w-fit  rounded-full bg-gray-300">
-                <FaMobileAlt className="text-gray-900" />
+
+            {/* Mobile */}
+            <li className="flex flex-wrap items-center gap-3">
+              <span
+                className="
+                  flex
+                  h-12
+                  w-12
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-accent
+                  text-accent-foreground
+                "
+              >
+                <FaMobileAlt />
               </span>
-              <div className="text text-[14px]">
-                <h4 className="font-bold">Mobile:</h4>
+
+              <div className="text-sm">
+                <h4 className="font-bold text-foreground">Mobile:</h4>
+
                 <p>
                   <Link
-                    className="hover:text-primary deuration-300"
-                    href={"tel:"}
+                    className="
+                      font-light
+                      text-muted-foreground
+                      transition-colors
+                      hover:text-primary
+                    "
+                    href="tel:"
                   >
                     578-393-4937
                   </Link>
                 </p>
               </div>
             </li>
-            <li className="text-gray-900 dark:text-gray-300  font-light flex items-center gap-1 flex-wrap mt-3">
-              <span className="p-4  block w-fit  rounded-full bg-gray-300">
-                <TbWorldWww className="text-gray-900" />
+
+            {/* Website */}
+            <li className="flex flex-wrap items-center gap-3">
+              <span
+                className="
+                  flex
+                  h-12
+                  w-12
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-accent
+                  text-accent-foreground
+                "
+              >
+                <TbWorldWww />
               </span>
-              <div className="text text-[14px]">
-                <h4 className="font-bold">Website:</h4>
+
+              <div className="text-sm">
+                <h4 className="font-bold text-foreground">Website:</h4>
+
                 <p>
                   <Link
-                    className="hover:text-primary deuration-300 dark:text-gray-300 "
-                    href={"/"}
+                    className="
+                      font-light
+                      text-muted-foreground
+                      transition-colors
+                      hover:text-primary
+                    "
+                    href="/"
                   >
                     creativethemes.com
                   </Link>
@@ -136,6 +293,6 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-    </div>
+    </footer>
   );
 }
