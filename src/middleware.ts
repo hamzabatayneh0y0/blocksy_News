@@ -13,9 +13,23 @@ export default middleware(async (request) => {
   const isAuthRoute = authRoutes.some((route) =>
     path.startsWith(route)
   );
+  const isAdminRoute = path.startsWith("/admin");
+
 
   if (isAuthRoute) {
     if (session?.user?.email) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    return NextResponse.next();
+  }
+
+  if (isAdminRoute) {
+    if (!session?.user?.email) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    if (!session.user.isAdmin) {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
