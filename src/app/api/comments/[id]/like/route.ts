@@ -91,7 +91,7 @@ if (!comment) {
 
   type: "COMMENT_LIKE",
 
-  url: `/article/${comment.articleId}#comment-${commentId}`,
+  url: `/articles/${comment.articleId}#comment-${commentId}`,
 });
 
       return NextResponse.json({ message: "liked" }, { status: 201 });
