@@ -17,7 +17,7 @@ const manrope = Manrope({
   variable: "--font-sans",
 });
 export const metadata: Metadata = {
-  metadataBase: new URL(`${DOMAIN}`),
+  metadataBase: new URL(DOMAIN),
 
   title: {
     default: "Blocksy News",
@@ -27,7 +27,15 @@ export const metadata: Metadata = {
   description: "your way to now",
   icons: ["/Gemini_Generated_Image_kcgvq9kcgvq9kcgv.svg"],
   openGraph: {
-    images: ["/og-image.jpeg"],
+    images: [
+      {
+        url: "/og-image.jpeg",
+
+        width: 1200,
+        height: 630,
+        alt: "Blocksy News",
+      },
+    ],
   },
 };
 
