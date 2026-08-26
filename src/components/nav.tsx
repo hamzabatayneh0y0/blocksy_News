@@ -15,13 +15,14 @@ import { NotificationBell } from "./Notification";
 export default function Nav({ session }: { session: Session | null }) {
   const route = useRouter();
   const image = session?.user?.image;
-
-  const optimizedImage = image?.includes("res.cloudinary.com")
-    ? image.replace("/upload/", "/upload/q_auto,f_auto/")
-    : image ||
-      "/images/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.avif";
+  console.log(image);
+  const optimizedImage = image
+    ? image
+    : "/images/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.avif";
 
   const [open, setOpen] = useState(false);
+  const [pagesOpen, setPagesOpen] = useState(false);
+  const [userOpen, setUserOpen] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -52,8 +53,11 @@ export default function Nav({ session }: { session: Session | null }) {
       toast.error(res?.message || "Logout failed");
     }
   }
-  const closeMenu = () => setOpen(false);
-
+  const closeMenu = () => {
+    setOpen(false);
+    setPagesOpen(false);
+    setUserOpen(false);
+  };
   return (
     <>
       {/* =========================
@@ -81,7 +85,10 @@ export default function Nav({ session }: { session: Session | null }) {
         />
 
         {/* Pages */}
-        <li className={`${style.pages} group relative cursor-pointer`}>
+        <li
+          className={`${style.pages} group relative cursor-pointer`}
+          onClick={() => setPagesOpen((prev) => !prev)}
+        >
           <span
             className="
               capitalize
@@ -94,7 +101,7 @@ export default function Nav({ session }: { session: Session | null }) {
           </span>
 
           <div
-            className="
+            className={`
               invisible
               absolute
               left-0
@@ -118,9 +125,10 @@ export default function Nav({ session }: { session: Session | null }) {
               group-hover:visible
               group-hover:opacity-100
               group-hover:translate-y-0
-            "
+              ${pagesOpen ? "visible translate-y-0 opacity-100" : ""}`}
           >
             <Link
+              onClick={closeMenu}
               href="/articles?pageNumber=1"
               className="
                 rounded-md
@@ -138,6 +146,7 @@ export default function Nav({ session }: { session: Session | null }) {
 
             {session?.user?.isAdmin && (
               <Link
+                onClick={closeMenu}
                 href="/admin"
                 className="
                   rounded-md
@@ -208,6 +217,7 @@ export default function Nav({ session }: { session: Session | null }) {
                   border-border
                   bg-muted
                 "
+                onClick={() => setUserOpen((prev) => !prev)}
               >
                 <Image
                   src={optimizedImage}
@@ -220,8 +230,8 @@ export default function Nav({ session }: { session: Session | null }) {
 
               {/* User Dropdown */}
               <div
-                className="
-                  invisible
+                className={`
+                   invisible
                   absolute
                   right-0
                   top-full
@@ -242,9 +252,11 @@ export default function Nav({ session }: { session: Session | null }) {
                   group-hover:visible
                   group-hover:translate-y-0
                   group-hover:opacity-100
-                "
+                    ${userOpen ? "visible translate-y-0 opacity-100" : ""}
+                  `}
               >
                 <Link
+                  onClick={closeMenu}
                   href={`/profile`}
                   className="
                     flex
@@ -266,7 +278,10 @@ export default function Nav({ session }: { session: Session | null }) {
                 </Link>
 
                 <button
-                  onClick={handleLogout}
+                  onClick={() => {
+                    handleLogout();
+                    closeMenu();
+                  }}
                   className="
                     flex
                     w-full
@@ -308,6 +323,7 @@ export default function Nav({ session }: { session: Session | null }) {
           ) : (
             <div className="flex items-center text-sm">
               <Link
+                onClick={closeMenu}
                 href="/login"
                 className="
                   text-foreground
@@ -321,6 +337,7 @@ export default function Nav({ session }: { session: Session | null }) {
               <span className="mx-1.5 text-muted-foreground">/</span>
 
               <Link
+                onClick={closeMenu}
                 href="/register"
                 className="
                   text-foreground
@@ -534,6 +551,7 @@ export default function Nav({ session }: { session: Session | null }) {
                   border-border
                   bg-muted
                 "
+                onClick={() => setUserOpen((prev) => !prev)}
               >
                 <Image
                   src={optimizedImage}
@@ -545,18 +563,14 @@ export default function Nav({ session }: { session: Session | null }) {
               </div>
 
               <div
-                className="
-                  max-h-0
-                  overflow-hidden
-                  px-0
-                  opacity-0
-                  transition-all
-                  duration-300
-                  ease-out
-                  group-hover:max-h-40
-                  group-hover:py-3
-                  group-hover:opacity-100
-                "
+                className={`
+    overflow-hidden
+    px-0
+    transition-all
+    duration-300
+    ease-out
+    ${userOpen ? "max-h-40 py-3 opacity-100" : "max-h-0 opacity-0"}
+  `}
               >
                 <Link
                   href={`/profile`}
