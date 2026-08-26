@@ -1,18 +1,13 @@
 import {  type NextAuthConfig } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import { loginSchema } from "./utils/validationSchemas";
-import prisma from "@/lib/db";
+
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
-import { EmailNotVerifiedError, LoginError } from "./utils/types";
+
 
 
 export default {
+  trustHost:true,
   providers: [
-
-    
-
     GitHub({
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,

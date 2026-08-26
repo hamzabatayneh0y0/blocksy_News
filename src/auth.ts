@@ -69,7 +69,6 @@ async signIn({user ,account}){
     strategy: "jwt",
   },
 
-...authConfig,
 providers:[
       Credentials({
       async authorize(credentials) {
@@ -112,6 +111,8 @@ providers:[
       };
     },
   }),
+    ...authConfig.providers,
+
 ],
  trustHost: true,
 events:{
