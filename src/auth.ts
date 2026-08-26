@@ -2,10 +2,14 @@
 
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import prisma from "@/lib/db";
 import authConfig from "./auth.config"
 import cloudinary from "./lib/cloudinary";
-import { EmailNotVerifiedError } from "./utils/types";
+import bcrypt from "bcryptjs";
+import { loginSchema } from "./utils/validationSchemas";
+import prisma from "@/lib/db";
+import Credentials from "next-auth/providers/credentials";
+import { EmailNotVerifiedError, LoginError } from "./utils/types";
+
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -66,6 +70,49 @@ async signIn({user ,account}){
   },
 
 ...authConfig,
+providers:[
+      Credentials({
+      async authorize(credentials) {
+      const validation = loginSchema.safeParse(credentials);
+  
+      if (!validation.success) {
+        throw new LoginError();
+      }
+  
+      const { email, password } = validation.data;
+  
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+  
+      if (!user || !user.password) {
+        throw new LoginError();
+      }
+  
+      const isPasswordMatch = await bcrypt.compare(
+        password,
+        user.password
+      );
+  
+      if (!isPasswordMatch) {
+        throw new LoginError();
+      }
+  
+      if (!user.emailVerified) {
+        throw new EmailNotVerifiedError();
+      }
+  
+      return {
+        id: user.id.toString(),
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        isAdmin: user.isAdmin,
+        emailVerified: user.emailVerified,
+      };
+    },
+  }),
+],
  trustHost: true,
 events:{
  async linkAccount({user ,account}){

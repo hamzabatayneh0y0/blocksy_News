@@ -65,7 +65,7 @@ export const registerAction = async (
     return {
       message:
         "We've sent a verification email. Please verify your account within 2 minutes.",
-      ok: true,
+      ok: false,
     };
   } catch (err: any) {
     console.log("RegisterAction-CatchError:", err);

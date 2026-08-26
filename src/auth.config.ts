@@ -10,47 +10,7 @@ import { EmailNotVerifiedError, LoginError } from "./utils/types";
 
 export default {
   providers: [
-    Credentials({
-    async authorize(credentials) {
-    const validation = loginSchema.safeParse(credentials);
 
-    if (!validation.success) {
-      throw new LoginError();
-    }
-
-    const { email, password } = validation.data;
-
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!user || !user.password) {
-      throw new LoginError();
-    }
-
-    const isPasswordMatch = await bcrypt.compare(
-      password,
-      user.password
-    );
-
-    if (!isPasswordMatch) {
-      throw new LoginError();
-    }
-
-    if (!user.emailVerified) {
-      throw new EmailNotVerifiedError();
-    }
-
-    return {
-      id: user.id.toString(),
-      name: user.name,
-      email: user.email,
-      image: user.image,
-      isAdmin: user.isAdmin,
-      emailVerified: user.emailVerified,
-    };
-  },
-}),
     
 
     GitHub({
