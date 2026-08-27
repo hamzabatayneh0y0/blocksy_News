@@ -15,7 +15,6 @@ import { NotificationBell } from "./Notification";
 export default function Nav({ session }: { session: Session | null }) {
   const route = useRouter();
   const image = session?.user?.image;
-  console.log(image);
   const optimizedImage = image
     ? image
     : "/images/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.avif";
@@ -78,7 +77,7 @@ export default function Nav({ session }: { session: Session | null }) {
             cursor-pointer
             text-2xl
             text-foreground
-            transition-colors
+            transition-colors`
             hover:text-primary
           "
           onClick={closeMenu}

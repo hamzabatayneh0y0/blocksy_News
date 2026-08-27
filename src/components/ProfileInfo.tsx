@@ -19,7 +19,7 @@ export default function ProfileInfo({ user }: Props) {
   const [name, setName] = useState(user.name);
   const [image, setImage] = useState(user.image);
   const avatar =
-    "../../public/images/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.avif";
+    "/images/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.avif";
 
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [nameDialog, setNameDialog] = useState(false);

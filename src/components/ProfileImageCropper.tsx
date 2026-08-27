@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Cropper from "react-easy-crop";
 import { Button } from "@/components/ui/button";
 import { getCroppedImg, PixelCrop } from "@/utils/cropImage";
@@ -10,6 +10,7 @@ interface Props {
   onCrop: (file: File) => void;
   onCancel: () => void;
 }
+// في layout.tsx أو أي مكان مؤقت للتست
 
 export default function ProfileImageCropper({
   imageSrc,
@@ -26,7 +27,11 @@ export default function ProfileImageCropper({
   const onCropComplete = (_croppedArea: unknown, croppedPixels: PixelCrop) => {
     setCroppedAreaPixels(croppedPixels);
   };
-
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      import("eruda").then((eruda) => eruda.default.init());
+    }
+  }, []);
   async function handleCrop() {
     if (!croppedAreaPixels) return;
 
