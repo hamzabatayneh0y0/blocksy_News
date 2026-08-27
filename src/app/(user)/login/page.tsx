@@ -10,10 +10,6 @@ export const metadata = {
     description:
       "Sign in to your account and continue exploring articles on our platform.",
   },
-  robots: {
-    index: false,
-    follow: false,
-  },
 };
 
 export default async function Login({

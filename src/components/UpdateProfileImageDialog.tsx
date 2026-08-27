@@ -133,8 +133,8 @@ export default function UpdateProfileImageDialog({
         URL.revokeObjectURL(imagePreview);
       }
 
-      const previewUrl = URL.createObjectURL(file);
-
+      // const previewUrl = URL.createObjectURL(file);
+      const previewUrl = await downscaleImage(file);
       // لا نخزن الملف النهائي لسه
       // نفتح cropper
       setCropImageSrc(previewUrl);
@@ -179,7 +179,24 @@ export default function UpdateProfileImageDialog({
       fileInputRef.current.value = "";
     }
   }
-
+  async function downscaleImage(file: File, maxDim = 1600): Promise<string> {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = bitmap.width * scale;
+    canvas.height = bitmap.height * scale;
+    const ctx = canvas.getContext("2d")!;
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    return new Promise((resolve) => {
+      canvas.toBlob(
+        (blob) => {
+          resolve(URL.createObjectURL(blob!));
+        },
+        "image/jpeg",
+        0.9,
+      );
+    });
+  }
   function handleOpenChange(value: boolean) {
     if (!value) {
       setState("form");

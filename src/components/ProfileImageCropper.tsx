@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Cropper from "react-easy-crop";
 import { Button } from "@/components/ui/button";
 import { getCroppedImg, PixelCrop } from "@/utils/cropImage";
@@ -10,7 +10,6 @@ interface Props {
   onCrop: (file: File) => void;
   onCancel: () => void;
 }
-// في layout.tsx أو أي مكان مؤقت للتست
 
 export default function ProfileImageCropper({
   imageSrc,
@@ -23,30 +22,24 @@ export default function ProfileImageCropper({
     null,
   );
   const [isCropping, setIsCropping] = useState(false);
+  const [mediaLoaded, setMediaLoaded] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   const onCropComplete = (_croppedArea: unknown, croppedPixels: PixelCrop) => {
     setCroppedAreaPixels(croppedPixels);
   };
-  useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      import("eruda").then((eruda) => eruda.default.init());
-    }
-  }, []);
+
   async function handleCrop() {
-    if (!croppedAreaPixels) return;
+    if (!croppedAreaPixels || !mediaLoaded) return;
 
     try {
       setIsCropping(true);
-
       const blob = await getCroppedImg(imageSrc, croppedAreaPixels);
-
-      const file = new File([blob], "profile.jpg", {
-        type: "image/jpeg",
-      });
-
+      const file = new File([blob], "profile.jpg", { type: "image/jpeg" });
       onCrop(file);
     } catch (error) {
       console.error("cropImageError", error);
+      setLoadError(true);
     } finally {
       setIsCropping(false);
     }
@@ -54,9 +47,21 @@ export default function ProfileImageCropper({
 
   return (
     <div className="space-y-4">
-      {/* Cropper */}
       <div className="relative mx-auto h-72 w-72 overflow-hidden rounded-lg bg-black">
+        {!mediaLoaded && !loadError && (
+          <div className="absolute inset-0 flex items-center justify-center text-sm text-white/70">
+            جاري تحميل الصورة...
+          </div>
+        )}
+
+        {loadError && (
+          <div className="absolute inset-0 flex items-center justify-center text-sm text-red-400">
+            تعذر تحميل الصورة، جرّب صورة تانية
+          </div>
+        )}
+
         <Cropper
+          key={imageSrc} // يفرض remount عند تغيير الصورة
           image={imageSrc}
           crop={crop}
           zoom={zoom}
@@ -66,13 +71,12 @@ export default function ProfileImageCropper({
           onCropChange={setCrop}
           onZoomChange={setZoom}
           onCropComplete={onCropComplete}
+          onMediaLoaded={() => setMediaLoaded(true)}
         />
       </div>
 
-      {/* Zoom */}
       <div className="space-y-2">
         <p className="text-sm font-medium">Zoom</p>
-
         <input
           type="range"
           min={1}
@@ -81,10 +85,10 @@ export default function ProfileImageCropper({
           value={zoom}
           onChange={(e) => setZoom(Number(e.target.value))}
           className="w-full cursor-pointer"
+          disabled={!mediaLoaded}
         />
       </div>
 
-      {/* Actions */}
       <div className="flex justify-end gap-2">
         <Button
           type="button"
@@ -94,8 +98,11 @@ export default function ProfileImageCropper({
         >
           Cancel
         </Button>
-
-        <Button type="button" disabled={isCropping} onClick={handleCrop}>
+        <Button
+          type="button"
+          disabled={isCropping || !mediaLoaded}
+          onClick={handleCrop}
+        >
           {isCropping ? "Processing..." : "Crop"}
         </Button>
       </div>

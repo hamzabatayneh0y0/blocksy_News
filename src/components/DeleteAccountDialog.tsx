@@ -41,6 +41,8 @@ export default function DeleteAccountDialog({
 
     onSuccess: () => {
       setState("success");
+    },
+    onMutate: () => {
       LogOutAction();
       router.refresh();
     },

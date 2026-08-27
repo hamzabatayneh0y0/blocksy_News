@@ -9,10 +9,6 @@ export const metadata = {
     description:
       "Sign up to start reading, bookmarking, and interacting with articles on our platform.",
   },
-  robots: {
-    index: false,
-    follow: false,
-  },
 };
 
 export default async function Regester({
