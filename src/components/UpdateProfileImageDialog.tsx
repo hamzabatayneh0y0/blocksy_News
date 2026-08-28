@@ -4,13 +4,7 @@ import Image from "next/image";
 import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 
 import { useMutation } from "@tanstack/react-query";
-import {
-  AlertCircle,
-  CheckCircle2,
-  CircleAlert,
-  Upload,
-  X,
-} from "lucide-react";
+import { AlertCircle, CircleAlert, Upload, X } from "lucide-react";
 
 import {
   AlertDialog,
@@ -41,8 +35,63 @@ interface Props {
 type State = "form" | "success" | "error";
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_DIMENSION = 1600;
+
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(new Error("FileReader failed to read file"));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function loadImage(src: string): Promise<HTMLImageElement> {
+  const img = new window.Image();
+  img.src = src;
+
+  if ("decode" in img) {
+    try {
+      await img.decode();
+      return img;
+    } catch (e) {
+      console.warn("decode() failed, falling back to onload", e);
+    }
+  }
+
+  return new Promise((resolve, reject) => {
+    if (img.complete && img.naturalWidth > 0) {
+      resolve(img);
+      return;
+    }
+
+    img.onload = () => resolve(img);
+    img.onerror = (event) => {
+      reject(
+        new Error(
+          `Image load failed | eventType=${(event as Event).type} | complete=${img.complete} | naturalWidth=${img.naturalWidth} | srcPrefix=${img.src.slice(0, 30)} | srcLength=${img.src.length}`,
+        ),
+      );
+    };
+  });
+}
+
+function downscaleImage(img: HTMLImageElement, maxDim: number): string {
+  const scale = Math.min(
+    1,
+    maxDim / Math.max(img.naturalWidth, img.naturalHeight),
+  );
+
+  const canvas = document.createElement("canvas");
+  canvas.width = img.naturalWidth * scale;
+  canvas.height = img.naturalHeight * scale;
+
+  const ctx = canvas.getContext("2d")!;
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  return canvas.toDataURL("image/jpeg", 0.9);
+}
 
 export default function UpdateProfileImageDialog({
   userId,
@@ -57,24 +106,20 @@ export default function UpdateProfileImageDialog({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [image, setImage] = useState<File | null>(null);
-
   const [imagePreview, setImagePreview] = useState(currentImage || userAvatar);
-
   const [isDragging, setIsDragging] = useState(false);
   const [state, setState] = useState<State>("form");
   const [error, setError] = useState("");
   const { update } = useSession();
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
   const router = useRouter();
+
   const mutation = useMutation({
     mutationFn: () => updateProfileImage(userId, image as File),
 
     onSuccess: async (data) => {
       onSuccess(data.user.image);
-
-      await update({
-        image: data.user.image,
-      });
+      await update({ image: data.user.image });
       setState("success");
       router.refresh();
       onOpenChange(false);
@@ -86,7 +131,6 @@ export default function UpdateProfileImageDialog({
           error?.message ||
           "Something went wrong",
       );
-
       setState("error");
     },
   });
@@ -129,19 +173,17 @@ export default function UpdateProfileImageDialog({
     }
 
     try {
-      if (imagePreview.startsWith("blob:")) {
-        URL.revokeObjectURL(imagePreview);
-      }
+      const dataUrl = await fileToDataUrl(file);
+      const img = await loadImage(dataUrl);
 
-      const MAX_DIMENSION = 1600;
-      const { width, height } = await getImageDimensions(file);
+      const needsResize =
+        img.naturalWidth > MAX_DIMENSION || img.naturalHeight > MAX_DIMENSION;
 
-      const previewUrl =
-        width > MAX_DIMENSION || height > MAX_DIMENSION
-          ? await downscaleImage(file, MAX_DIMENSION)
-          : URL.createObjectURL(file);
+      const finalSrc = needsResize
+        ? downscaleImage(img, MAX_DIMENSION)
+        : dataUrl;
 
-      setCropImageSrc(previewUrl);
+      setCropImageSrc(finalSrc);
       setState("form");
       setError("");
     } catch (err: any) {
@@ -152,9 +194,9 @@ export default function UpdateProfileImageDialog({
       setState("error");
     }
   }
+
   function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-
     if (file) {
       handleImage(file);
     }
@@ -162,11 +204,9 @@ export default function UpdateProfileImageDialog({
 
   function handleDrop(e: DragEvent<HTMLDivElement>) {
     e.preventDefault();
-
     setIsDragging(false);
 
     const file = e.dataTransfer.files?.[0];
-
     if (file) {
       handleImage(file);
     }
@@ -178,103 +218,28 @@ export default function UpdateProfileImageDialog({
     }
 
     setImage(null);
-
     setImagePreview(currentImage || userAvatar);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   }
-  async function getImageDimensions(
-    file: File,
-  ): Promise<{ width: number; height: number }> {
-    if ("createImageBitmap" in window) {
-      try {
-        const bitmap = await createImageBitmap(file);
-        const dims = { width: bitmap.width, height: bitmap.height };
-        bitmap.close();
-        return dims;
-      } catch (e) {
-        console.warn("createImageBitmap failed, falling back", e);
-      }
-    }
-    return getImageDimensionsFallback(file);
-  }
 
-  function getImageDimensionsFallback(
-    file: File,
-  ): Promise<{ width: number; height: number }> {
-    return new Promise((resolve, reject) => {
-      const img = new window.Image();
-      const url = URL.createObjectURL(file);
-      img.onload = () => {
-        resolve({ width: img.naturalWidth, height: img.naturalHeight });
-        URL.revokeObjectURL(url);
-      };
-      img.onerror = (e) => {
-        URL.revokeObjectURL(url);
-        reject(e);
-      };
-      img.src = url;
-    });
-  }
-
-  async function downscaleImage(file: File, maxDim = 1600): Promise<string> {
-    const img = new window.Image();
-    const objectUrl = URL.createObjectURL(file);
-
-    try {
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = reject;
-        img.src = objectUrl;
-      });
-
-      const scale = Math.min(
-        1,
-        maxDim / Math.max(img.naturalWidth, img.naturalHeight),
-      );
-      const canvas = document.createElement("canvas");
-      canvas.width = img.naturalWidth * scale;
-      canvas.height = img.naturalHeight * scale;
-
-      const ctx = canvas.getContext("2d")!;
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      return await new Promise((resolve, reject) => {
-        canvas.toBlob(
-          (blob) => {
-            if (!blob) return reject(new Error("toBlob failed"));
-            resolve(URL.createObjectURL(blob));
-          },
-          "image/jpeg",
-          0.9,
-        );
-      });
-    } finally {
-      URL.revokeObjectURL(objectUrl);
-    }
-  }
   function handleOpenChange(value: boolean) {
     if (!value) {
       setState("form");
       setError("");
     }
-
     onOpenChange(value);
   }
+
   function handleCroppedImage(file: File) {
-    if (cropImageSrc?.startsWith("blob:")) {
-      URL.revokeObjectURL(cropImageSrc);
-    }
-
     setCropImageSrc(null);
-
     setImage(file);
     setImagePreview(URL.createObjectURL(file));
-
     setError("");
   }
+
   if (state === "error") {
     return (
       <AlertDialog open={open} onOpenChange={handleOpenChange}>
@@ -309,117 +274,110 @@ export default function UpdateProfileImageDialog({
       </AlertDialog>
     );
   }
+
   return (
     <>
       {cropImageSrc ? (
         <ProfileImageCropper
           imageSrc={cropImageSrc}
           onCrop={handleCroppedImage}
-          onCancel={() => {
-            URL.revokeObjectURL(cropImageSrc);
-            setCropImageSrc(null);
-          }}
+          onCancel={() => setCropImageSrc(null)}
         />
       ) : (
-        <>
-          <AlertDialog open={open} onOpenChange={handleOpenChange}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Change profile picture</AlertDialogTitle>
+        <AlertDialog open={open} onOpenChange={handleOpenChange}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Change profile picture</AlertDialogTitle>
 
-                <AlertDialogDescription>
-                  Choose a new profile picture. You can change it once every 7
-                  days.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
+              <AlertDialogDescription>
+                Choose a new profile picture. You can change it once every 7
+                days.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
 
-              <div className="space-y-3">
-                {/* Preview */}
-                <div className="relative mx-auto size-40 overflow-hidden rounded-full border">
-                  <Image
-                    src={imagePreview}
-                    alt="Profile preview"
-                    fill
-                    className="object-cover"
-                    sizes="160px"
-                  />
+            <div className="space-y-3">
+              <div className="relative mx-auto size-40 overflow-hidden rounded-full border">
+                <Image
+                  src={imagePreview}
+                  alt="Profile preview"
+                  fill
+                  className="object-cover"
+                  sizes="160px"
+                />
 
-                  {image && (
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="destructive"
-                      onClick={removeNewImage}
-                      disabled={mutation.isPending}
-                      className="absolute right-2 top-2 size-8"
-                    >
-                      <X className="size-4" />
-                    </Button>
-                  )}
-                </div>
-
-                {/* Upload */}
-                <div
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    setIsDragging(true);
-                  }}
-                  onDragLeave={() => setIsDragging(false)}
-                  onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 text-center ${
-                    isDragging
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50 hover:bg-muted/40"
-                  }`}
-                >
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    className="hidden"
-                    onChange={handleFileChange}
-                  />
-
-                  <div className="mb-2 flex size-10 items-center justify-center rounded-full bg-primary/10">
-                    <Upload className="size-5 text-primary" />
-                  </div>
-
-                  <p className="text-sm font-medium">Drag & drop an image</p>
-
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Maximum size: 5MB
-                  </p>
-                </div>
-
-                {/* Warning */}
-                <div className="flex items-start gap-2 rounded-lg border border-yellow-500/20 bg-yellow-500/10 px-3 py-2">
-                  <AlertCircle className="mt-0.5 size-4 shrink-0 text-yellow-500" />
-
-                  <p className="text-xs text-yellow-700 dark:text-yellow-400">
-                    You can change your profile picture only once every 7 days.
-                  </p>
-                </div>
+                {image && (
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="destructive"
+                    onClick={removeNewImage}
+                    disabled={mutation.isPending}
+                    className="absolute right-2 top-2 size-8"
+                  >
+                    <X className="size-4" />
+                  </Button>
+                )}
               </div>
 
-              <AlertDialogFooter>
-                <AlertDialogCancel disabled={mutation.isPending}>
-                  Cancel
-                </AlertDialogCancel>
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className={`flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 text-center ${
+                  isDragging
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:border-primary/50 hover:bg-muted/40"
+                }`}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
 
-                <AlertDialogAction
-                  disabled={!image || mutation.isPending}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    mutation.mutate();
-                  }}
-                >
-                  {mutation.isPending ? "Uploading..." : "Update Picture"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>{" "}
-          </AlertDialog>
-        </>
+                <div className="mb-2 flex size-10 items-center justify-center rounded-full bg-primary/10">
+                  <Upload className="size-5 text-primary" />
+                </div>
+
+                <p className="text-sm font-medium">Drag & drop an image</p>
+
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Maximum size: 5MB
+                </p>
+              </div>
+
+              <div className="flex items-start gap-2 rounded-lg border border-yellow-500/20 bg-yellow-500/10 px-3 py-2">
+                <AlertCircle className="mt-0.5 size-4 shrink-0 text-yellow-500" />
+
+                <p className="text-xs text-yellow-700 dark:text-yellow-400">
+                  You can change your profile picture only once every 7 days.
+                </p>
+              </div>
+            </div>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={mutation.isPending}>
+                Cancel
+              </AlertDialogCancel>
+
+              <AlertDialogAction
+                disabled={!image || mutation.isPending}
+                onClick={(e) => {
+                  e.preventDefault();
+                  mutation.mutate();
+                }}
+              >
+                {mutation.isPending ? "Uploading..." : "Update Picture"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </>
   );

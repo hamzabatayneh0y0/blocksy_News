@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Cropper from "react-easy-crop";
 import { Button } from "@/components/ui/button";
 import { getCroppedImg, PixelCrop } from "@/utils/cropImage";
@@ -61,7 +61,7 @@ export default function ProfileImageCropper({
         )}
 
         <Cropper
-          key={imageSrc} // يفرض remount عند تغيير الصورة
+          key={imageSrc}
           image={imageSrc}
           crop={crop}
           zoom={zoom}
