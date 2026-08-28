@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Cropper from "react-easy-crop";
 import { Button } from "@/components/ui/button";
 import { getCroppedImg, PixelCrop } from "@/utils/cropImage";
@@ -44,6 +44,12 @@ export default function ProfileImageCropper({
       setIsCropping(false);
     }
   }
+
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_ENABLE_ERUDA === "true") {
+      import("eruda").then((eruda) => eruda.default.init());
+    }
+  }, []);
 
   return (
     <div className="space-y-4">

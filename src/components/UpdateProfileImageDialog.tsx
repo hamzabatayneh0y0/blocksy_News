@@ -133,15 +133,19 @@ export default function UpdateProfileImageDialog({
         URL.revokeObjectURL(imagePreview);
       }
 
-      // const previewUrl = URL.createObjectURL(file);
-      const previewUrl = await downscaleImage(file);
-      // لا نخزن الملف النهائي لسه
-      // نفتح cropper
-      setCropImageSrc(previewUrl);
+      const MAX_DIMENSION = 1600;
+      const { width, height } = await getImageDimensions(file);
 
+      const previewUrl =
+        width > MAX_DIMENSION || height > MAX_DIMENSION
+          ? await downscaleImage(file, MAX_DIMENSION)
+          : URL.createObjectURL(file);
+
+      setCropImageSrc(previewUrl);
       setState("form");
       setError("");
-    } catch {
+    } catch (err) {
+      console.error("handleImage error:", err); // ← هيك بتشوف السبب الحقيقي بالـ console (استخدم eruda من قبل)
       setError("Failed to process the image.");
       setState("error");
     }
@@ -179,23 +183,75 @@ export default function UpdateProfileImageDialog({
       fileInputRef.current.value = "";
     }
   }
-  async function downscaleImage(file: File, maxDim = 1600): Promise<string> {
-    const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
-    const canvas = document.createElement("canvas");
-    canvas.width = bitmap.width * scale;
-    canvas.height = bitmap.height * scale;
-    const ctx = canvas.getContext("2d")!;
-    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-    return new Promise((resolve) => {
-      canvas.toBlob(
-        (blob) => {
-          resolve(URL.createObjectURL(blob!));
-        },
-        "image/jpeg",
-        0.9,
-      );
+  async function getImageDimensions(
+    file: File,
+  ): Promise<{ width: number; height: number }> {
+    if ("createImageBitmap" in window) {
+      try {
+        const bitmap = await createImageBitmap(file);
+        const dims = { width: bitmap.width, height: bitmap.height };
+        bitmap.close();
+        return dims;
+      } catch (e) {
+        console.warn("createImageBitmap failed, falling back", e);
+      }
+    }
+    return getImageDimensionsFallback(file);
+  }
+
+  function getImageDimensionsFallback(
+    file: File,
+  ): Promise<{ width: number; height: number }> {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        resolve({ width: img.naturalWidth, height: img.naturalHeight });
+        URL.revokeObjectURL(url);
+      };
+      img.onerror = (e) => {
+        URL.revokeObjectURL(url);
+        reject(e);
+      };
+      img.src = url;
     });
+  }
+
+  async function downscaleImage(file: File, maxDim = 1600): Promise<string> {
+    const img = new window.Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = reject;
+        img.src = objectUrl;
+      });
+
+      const scale = Math.min(
+        1,
+        maxDim / Math.max(img.naturalWidth, img.naturalHeight),
+      );
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth * scale;
+      canvas.height = img.naturalHeight * scale;
+
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      return await new Promise((resolve, reject) => {
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) return reject(new Error("toBlob failed"));
+            resolve(URL.createObjectURL(blob));
+          },
+          "image/jpeg",
+          0.9,
+        );
+      });
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
   }
   function handleOpenChange(value: boolean) {
     if (!value) {
