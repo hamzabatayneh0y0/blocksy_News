@@ -144,9 +144,11 @@ export default function UpdateProfileImageDialog({
       setCropImageSrc(previewUrl);
       setState("form");
       setError("");
-    } catch (err) {
-      console.error("handleImage error:", err); // ← هيك بتشوف السبب الحقيقي بالـ console (استخدم eruda من قبل)
-      setError("Failed to process the image.");
+    } catch (err: any) {
+      console.error("handleImage error:", err);
+      setError(
+        `Failed to process the image: ${err?.message || err?.name || String(err)}`,
+      );
       setState("error");
     }
   }

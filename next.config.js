@@ -29,7 +29,7 @@ const cspHeader = `
     blob:
     data:;
 
-  font-src 'self';
+  font-src 'self' data:;
 
   object-src 'none';
 

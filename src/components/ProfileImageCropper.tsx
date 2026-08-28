@@ -45,24 +45,18 @@ export default function ProfileImageCropper({
     }
   }
 
-  useEffect(() => {
-    if (process.env.NEXT_PUBLIC_ENABLE_ERUDA === "true") {
-      import("eruda").then((eruda) => eruda.default.init());
-    }
-  }, []);
-
   return (
     <div className="space-y-4">
       <div className="relative mx-auto h-72 w-72 overflow-hidden rounded-lg bg-black">
         {!mediaLoaded && !loadError && (
           <div className="absolute inset-0 flex items-center justify-center text-sm text-white/70">
-            جاري تحميل الصورة...
+            Loading image...
           </div>
         )}
 
         {loadError && (
           <div className="absolute inset-0 flex items-center justify-center text-sm text-red-400">
-            تعذر تحميل الصورة، جرّب صورة تانية
+            Failed to load image, try another one
           </div>
         )}
 
