@@ -38,19 +38,19 @@ const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_FILE_SIZE = 4 * 1024 * 1024;
 const MAX_DIMENSION = 1600;
 
-async function fileToDataUrl(file: File): Promise<string> {
-  const buffer = await file.arrayBuffer();
-  const bytes = new Uint8Array(buffer);
+// async function fileToDataUrl(file: File): Promise<string> {
+//   const buffer = await file.arrayBuffer();
+//   const bytes = new Uint8Array(buffer);
 
-  let binary = "";
-  const chunkSize = 8192;
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
+//   let binary = "";
+//   const chunkSize = 8192;
+//   for (let i = 0; i < bytes.length; i += chunkSize) {
+//     binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+//   }
 
-  const base64 = btoa(binary);
-  return `data:${file.type};base64,${base64}`;
-}
+//   const base64 = btoa(binary);
+//   return `data:${file.type};base64,${base64}`;
+// }
 
 export default function UpdateProfileImageDialog({
   userId,
@@ -60,7 +60,7 @@ export default function UpdateProfileImageDialog({
   onSuccess,
 }: Props) {
   const userAvatar =
-    "../../public/images/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.avif";
+    "/images/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.avif";
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -133,15 +133,14 @@ export default function UpdateProfileImageDialog({
     }
 
     try {
-      const dataUrl = await fileToDataUrl(file);
-      setCropImageSrc(dataUrl);
+      // const dataUrl = await fileToDataUrl(file);
+      const previewUrl = URL.createObjectURL(file);
+      setCropImageSrc(previewUrl);
       setState("form");
       setError("");
     } catch (err: any) {
       console.error("handleImage error:", err);
-      setError(
-        `Failed to process the image: ${err?.message || err?.name || String(err)}`,
-      );
+      setError(`Failed to process the image`);
       setState("error");
     }
   }
@@ -232,7 +231,12 @@ export default function UpdateProfileImageDialog({
         <ProfileImageCropper
           imageSrc={cropImageSrc}
           onCrop={handleCroppedImage}
-          onCancel={() => setCropImageSrc(null)}
+          onCancel={() => {
+            if (cropImageSrc?.startsWith("blob:")) {
+              URL.revokeObjectURL(cropImageSrc);
+            }
+            setCropImageSrc(null);
+          }}
         />
       ) : (
         <AlertDialog open={open} onOpenChange={handleOpenChange}>
