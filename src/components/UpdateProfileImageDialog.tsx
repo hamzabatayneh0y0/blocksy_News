@@ -35,62 +35,21 @@ interface Props {
 type State = "form" | "success" | "error";
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 4 * 1024 * 1024;
 const MAX_DIMENSION = 1600;
 
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = () => reject(new Error("FileReader failed to read file"));
-    reader.readAsDataURL(file);
-  });
-}
+async function fileToDataUrl(file: File): Promise<string> {
+  const buffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
 
-async function loadImage(src: string): Promise<HTMLImageElement> {
-  const img = new window.Image();
-  img.src = src;
-
-  if ("decode" in img) {
-    try {
-      await img.decode();
-      return img;
-    } catch (e) {
-      console.warn("decode() failed, falling back to onload", e);
-    }
+  let binary = "";
+  const chunkSize = 8192;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
   }
 
-  return new Promise((resolve, reject) => {
-    if (img.complete && img.naturalWidth > 0) {
-      resolve(img);
-      return;
-    }
-
-    img.onload = () => resolve(img);
-    img.onerror = (event) => {
-      reject(
-        new Error(
-          `Image load failed | eventType=${(event as Event).type} | complete=${img.complete} | naturalWidth=${img.naturalWidth} | srcPrefix=${img.src.slice(0, 30)} | srcLength=${img.src.length}`,
-        ),
-      );
-    };
-  });
-}
-
-function downscaleImage(img: HTMLImageElement, maxDim: number): string {
-  const scale = Math.min(
-    1,
-    maxDim / Math.max(img.naturalWidth, img.naturalHeight),
-  );
-
-  const canvas = document.createElement("canvas");
-  canvas.width = img.naturalWidth * scale;
-  canvas.height = img.naturalHeight * scale;
-
-  const ctx = canvas.getContext("2d")!;
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-  return canvas.toDataURL("image/jpeg", 0.9);
+  const base64 = btoa(binary);
+  return `data:${file.type};base64,${base64}`;
 }
 
 export default function UpdateProfileImageDialog({
@@ -143,6 +102,7 @@ export default function UpdateProfileImageDialog({
     setIsDragging(false);
     setState("form");
     setError("");
+    setCropImageSrc(null);
   }, [open, currentImage]);
 
   useEffect(() => {
@@ -174,16 +134,7 @@ export default function UpdateProfileImageDialog({
 
     try {
       const dataUrl = await fileToDataUrl(file);
-      const img = await loadImage(dataUrl);
-
-      const needsResize =
-        img.naturalWidth > MAX_DIMENSION || img.naturalHeight > MAX_DIMENSION;
-
-      const finalSrc = needsResize
-        ? downscaleImage(img, MAX_DIMENSION)
-        : dataUrl;
-
-      setCropImageSrc(finalSrc);
+      setCropImageSrc(dataUrl);
       setState("form");
       setError("");
     } catch (err: any) {
@@ -194,12 +145,12 @@ export default function UpdateProfileImageDialog({
       setState("error");
     }
   }
-
   function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
       handleImage(file);
     }
+    e.target.value = "";
   }
 
   function handleDrop(e: DragEvent<HTMLDivElement>) {
@@ -302,6 +253,10 @@ export default function UpdateProfileImageDialog({
                   alt="Profile preview"
                   fill
                   className="object-cover"
+                  unoptimized={
+                    imagePreview.startsWith("blob:") ||
+                    imagePreview.startsWith("data:")
+                  }
                   sizes="160px"
                 />
 

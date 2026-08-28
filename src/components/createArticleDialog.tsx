@@ -157,7 +157,21 @@ export default function CreateArticleDialog({
     "image/avif",
   ];
 
-  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+  const MAX_FILE_SIZE = 4 * 1024 * 1024;
+
+  async function fileToDataUrl(file: File): Promise<string> {
+    const buffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+
+    let binary = "";
+    const chunkSize = 8192;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+    }
+
+    const base64 = btoa(binary);
+    return `data:${file.type};base64,${base64}`;
+  }
 
   async function handleImage(file: File) {
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
@@ -181,23 +195,16 @@ export default function CreateArticleDialog({
     }
 
     try {
-      // const compressedFile = await imageCompression(file, {
-      //   maxSizeMB: 1.5,
-      //   maxWidthOrHeight: 1600,
-      //   useWebWorker: true,
-      // });
-
-      // if (imagePreview) {
-      //   URL.revokeObjectURL(imagePreview);
-      // }
+      const previewUrl = await fileToDataUrl(file);
 
       setImage(file);
-      setImagePreview(URL.createObjectURL(file));
+      setImagePreview(previewUrl);
 
       setState("form");
       setError("");
-    } catch {
-      setError("Failed to process the image.");
+    } catch (err: any) {
+      console.error("handleImage error:", err);
+      setError(`Failed to process the image`);
       setState("error");
     }
   }

@@ -313,44 +313,57 @@ export default function UpdateArticleDialog({
     "image/avif",
   ];
 
-  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+  const MAX_FILE_SIZE = 4 * 1024 * 1024;
+
+  async function fileToDataUrl(file: File): Promise<string> {
+    const buffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+
+    let binary = "";
+    const chunkSize = 8192;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+    }
+
+    const base64 = btoa(binary);
+    return `data:${file.type};base64,${base64}`;
+  }
 
   async function handleImage(file: File) {
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      showError(
+      setError(
         "Invalid image type. Only JPEG, PNG, WebP and AVIF are allowed.",
       );
+      setState("error");
       return;
     }
 
     if (file.size === 0) {
-      showError("Image is required.");
+      setError("Image is required.");
+      setState("error");
       return;
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      showError("Image size must be less than 5MB.");
+      setError("Image size must be less than 5MB.");
+      setState("error");
       return;
     }
 
     try {
-      // const compressedFile = await imageCompression(file, {
-      //   maxSizeMB: 1.5,
-      //   maxWidthOrHeight: 1600,
-      //   useWebWorker: true,
-      // });
-
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
-      }
+      const previewUrl = await fileToDataUrl(file);
 
       setImage(file);
-      setImagePreview(URL.createObjectURL(file));
+      setImagePreview(previewUrl);
 
       setState("form");
       setError("");
-    } catch {
-      showError("Failed to process the image.");
+    } catch (err: any) {
+      console.error("handleImage error:", err);
+      setError(
+        `Failed to process the image: ${err?.message || err?.name || String(err)}`,
+      );
+      setState("error");
     }
   }
 
@@ -639,6 +652,10 @@ export default function UpdateArticleDialog({
                   width={800}
                   height={450}
                   className="h-56 w-full object-cover object-center sm:h-72"
+                  unoptimized={
+                    imagePreview.startsWith("blob:") ||
+                    imagePreview.startsWith("data:")
+                  }
                 />
 
                 {image && (
