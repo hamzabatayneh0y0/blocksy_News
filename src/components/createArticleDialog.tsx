@@ -159,19 +159,19 @@ export default function CreateArticleDialog({
 
   const MAX_FILE_SIZE = 4 * 1024 * 1024;
 
-  // async function fileToDataUrl(file: File): Promise<string> {
-  //   const buffer = await file.arrayBuffer();
-  //   const bytes = new Uint8Array(buffer);
+  async function fileToDataUrl(file: File): Promise<string> {
+    const buffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
 
-  //   let binary = "";
-  //   const chunkSize = 8192;
-  //   for (let i = 0; i < bytes.length; i += chunkSize) {
-  //     binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  //   }
+    let binary = "";
+    const chunkSize = 8192;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+    }
 
-  //   const base64 = btoa(binary);
-  //   return `data:${file.type};base64,${base64}`;
-  // }
+    const base64 = btoa(binary);
+    return `data:${file.type};base64,${base64}`;
+  }
 
   async function handleImage(file: File) {
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
@@ -195,8 +195,7 @@ export default function CreateArticleDialog({
     }
 
     try {
-      // const previewUrl = await fileToDataUrl(file);
-      const previewUrl = URL.createObjectURL(file);
+      const previewUrl = await fileToDataUrl(file);
       setImage(file);
       setImagePreview(previewUrl);
 

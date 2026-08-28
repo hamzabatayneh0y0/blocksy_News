@@ -109,7 +109,7 @@ import { createGlobalNotification } from "@/utils/services/notification.service"
  *  @access  private (only admin can create article)
  */
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 4 * 1024 * 1024;
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
 

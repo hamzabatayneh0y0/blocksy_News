@@ -38,19 +38,19 @@ const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_FILE_SIZE = 4 * 1024 * 1024;
 const MAX_DIMENSION = 1600;
 
-// async function fileToDataUrl(file: File): Promise<string> {
-//   const buffer = await file.arrayBuffer();
-//   const bytes = new Uint8Array(buffer);
+async function fileToDataUrl(file: File): Promise<string> {
+  const buffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
 
-//   let binary = "";
-//   const chunkSize = 8192;
-//   for (let i = 0; i < bytes.length; i += chunkSize) {
-//     binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-//   }
+  let binary = "";
+  const chunkSize = 8192;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
 
-//   const base64 = btoa(binary);
-//   return `data:${file.type};base64,${base64}`;
-// }
+  const base64 = btoa(binary);
+  return `data:${file.type};base64,${base64}`;
+}
 
 export default function UpdateProfileImageDialog({
   userId,
@@ -133,8 +133,7 @@ export default function UpdateProfileImageDialog({
     }
 
     try {
-      // const dataUrl = await fileToDataUrl(file);
-      const previewUrl = URL.createObjectURL(file);
+      const previewUrl = await fileToDataUrl(file);
       setCropImageSrc(previewUrl);
       setState("form");
       setError("");

@@ -98,7 +98,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
       );
     }
 
-    const maxSize = 5 * 1024 * 1024;
+    const maxSize = 4 * 1024 * 1024;
 
     if (file.size > maxSize) {
       return NextResponse.json(

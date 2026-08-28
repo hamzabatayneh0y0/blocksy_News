@@ -113,7 +113,7 @@ export async function PUT(
       );
     }
 
-    const maxSize = 5 * 1024 * 1024;
+    const maxSize = 4 * 1024 * 1024;
 
     if (file.size === 0) {
       return NextResponse.json(
