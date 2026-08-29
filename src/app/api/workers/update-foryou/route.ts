@@ -7,7 +7,6 @@ import { updateForYouTags } from "@/utils/applyDecay";
 
 async function handler(req: Request) {
 
-  console.log("worker")
   const { userId, articleTags } =
     (await req.json()) as UpdateForYouBody;
 const id = parseInt(userId);

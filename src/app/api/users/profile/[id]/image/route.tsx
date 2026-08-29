@@ -5,7 +5,7 @@ import cloudinary from "@/lib/cloudinary";
 import { redis } from "@/lib/redis";
 import { uploudProfileImageLimite } from "@/utils/uploadImageLimite";
 import { revalidateTag } from "next/cache";
-
+import { fileTypeFromBuffer } from "file-type";
 interface Props {
   params: Promise<{ id: string }>;
 }
@@ -102,14 +102,22 @@ export async function PUT(request: NextRequest, { params }: Props) {
 
     if (file.size > maxSize) {
       return NextResponse.json(
-        { message: "Image size must be less than 5MB" },
+        { message: "Image size must be less than 4MB" },
         { status: 400 },
       );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const detectedType = await fileTypeFromBuffer(buffer);
 
+    if (!detectedType || !allowedTypes.includes(detectedType.mime)) {
+      return NextResponse.json(
+        {
+          message: "Invalid image content. File does not match declared type.",
+        },
+        { status: 400 },
+      );
+    }
     const uploadResult = await new Promise<{
       secure_url: string;
       public_id: string;

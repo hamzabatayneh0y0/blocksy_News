@@ -7,6 +7,7 @@ import { auth } from "@/auth";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidateTag } from "next/cache";
 import { createGlobalNotification } from "@/utils/services/notification.service";
+import { fileTypeFromBuffer } from "file-type";
 
 // /**
 //  *  @method  GET
@@ -179,6 +180,17 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
+   const buffer = Buffer.from(await image.arrayBuffer());
+    const detectedType = await fileTypeFromBuffer(buffer);
+
+    if (!detectedType || !ALLOWED_TYPES.includes(detectedType.mime)) {
+      return NextResponse.json(
+        {
+          message: "Invalid image content. File does not match declared type.",
+        },
+        { status: 400 },
+      );
+    }
 
     let parsedTags: string[]|null=null;
 
@@ -216,8 +228,8 @@ export async function POST(request: NextRequest) {
 
     const normalizedTags = validTags.map((tag) => tag.toLowerCase());
 
-    const buffer = Buffer.from(await image.arrayBuffer());
 
+ 
     const uploadResult = await new Promise<{
       secure_url: string;
       public_id: string;

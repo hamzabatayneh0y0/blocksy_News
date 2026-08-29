@@ -3,7 +3,7 @@ import { Manrope, Plus_Jakarta_Sans } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import CheckInternetProvider from "@/utils/checkInternetProvider";
 import { cn } from "@/lib/utils";
 import { auth } from "@/auth";
@@ -38,13 +38,14 @@ export const metadata: Metadata = {
     ],
   },
 };
-
+export const dynamic = "force-dynamic";
 interface RootLayoutProps {
   children: React.ReactNode;
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
   const dark = (await cookies()).get("dark")?.value;
+  const nonce = (await headers()).get("x-nonce");
 
   return (
     <html
@@ -55,7 +56,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       <body
         className={`${manrope.className}  bg-body  dark:bg-black dark:text-white `}
       >
-        <ThemeProvider>
+        <ThemeProvider nonce={nonce}>
           <SessionProvider>
             <ToastContainer theme="colored" position="top-center" />
             <main className="">

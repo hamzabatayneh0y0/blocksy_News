@@ -40,7 +40,7 @@ try {
 });
 
 if (!user) {
-  return [];
+    return NextResponse.json([], { status: 200 });
 }
 
 const forYouTags = user.forYou as ForYouTag[];
@@ -48,7 +48,7 @@ const forYouTags = user.forYou as ForYouTag[];
 const tagNames = forYouTags.map((tag) => tag.name);
 
 if (tagNames.length === 0) {
-  return [];
+return NextResponse.json([], { status: 200 });
 }
 
 const articles = await prisma.article.findMany({

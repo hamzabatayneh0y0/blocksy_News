@@ -1,52 +1,51 @@
 /** @type {import('next').NextConfig} */
 const isDev = process.env.NODE_ENV === "development";
 
-const cspHeader = `
-  default-src 'self';
+// const cspHeader = `
+//   default-src 'self';
 
-  connect-src 'self'
-    https://github.com
-    https://api.github.com
-    https://github.com/login/oauth
-    https://accounts.google.com
-    https://oauth2.googleapis.com;
+//   connect-src 'self'
+//     https://github.com
+//     https://api.github.com
+//     https://github.com/login/oauth
+//     https://accounts.google.com
+//     https://oauth2.googleapis.com;
 
-  script-src 'self'
-    'unsafe-inline'
-    ${isDev ? "'unsafe-eval'" : ""}
-    https://cdn.jsdelivr.net;
+//   script-src 'self'
 
-  worker-src 'self' blob:;
+//    ${isDev ? "'unsafe-eval'" : ""} https://cdn.jsdelivr.net;
 
-  style-src 'self' 'unsafe-inline';
+//   worker-src 'self' blob:;
 
-  img-src 'self'
-    https://authjs.dev
-    https://github.com
-    https://api.github.com
-    https://accounts.google.com
-    https://res.cloudinary.com
-    blob:
-    data:;
+//   style-src 'self' 'unsafe-inline';
 
-  font-src 'self' data:;
+//   img-src 'self'
+//     https://authjs.dev
+//     https://github.com
+//     https://api.github.com
+//     https://accounts.google.com
+//     https://res.cloudinary.com
+//     blob:
+//     data:;
 
-  object-src 'none';
+//   font-src 'self' data:;
 
-  base-uri 'self';
+//   object-src 'none';
 
-  form-action 'self'
-    https://github.com
-    https://api.github.com
-    https://github.com/login/oauth
-    https://accounts.google.com
-    https://oauth2.googleapis.com;
+//   base-uri 'self';
 
-  frame-src 'self' https://www.youtube.com;
-  frame-ancestors 'none';
+//   form-action 'self'
+//     https://github.com
+//     https://api.github.com
+//     https://github.com/login/oauth
+//     https://accounts.google.com
+//     https://oauth2.googleapis.com;
 
-  upgrade-insecure-requests;
-`;
+//   frame-src 'self' https://www.youtube.com;
+//   frame-ancestors 'none';
+
+//   upgrade-insecure-requests;
+// `;
 const nextConfig = {
   async headers() {
     return [
@@ -81,10 +80,10 @@ const nextConfig = {
             key: "Strict-Transport-Security",
             value: "max-age=31536000; includeSubDomains; preload",
           },
-          {
-            key: "Content-Security-Policy",
-            value: cspHeader.replace(/\n/g, ""),
-          },
+          // {
+          //   key: "Content-Security-Policy",
+          //   value: cspHeader.replace(/\n/g, ""),
+          // },
         ],
       },
     ];
