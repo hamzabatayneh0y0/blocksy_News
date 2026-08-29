@@ -40,13 +40,23 @@ Prisma queries are optimized with `select` over `include`, `_count` instead of l
 ## Environment Variables
 
 ```env
-DATABASE_URL=your_database_url
-AUTH_SECRET=your_auth_secret
-NEXTAUTH_URL=http://localhost:3000
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-REDIS_URL=your_redis_url
+DATABASE_URL=your value
+UPSTASH_REDIS_REST_URL=your value
+UPSTASH_REDIS_REST_TOKEN=your value
+REDIS_URL=your value
+NEXTAUTH_SECRET=your value
+GITHUB_CLIENT_ID=your value
+GITHUB_CLIENT_SECRET=your value
+GOOGLE_CLIENT_ID=your value
+GOOGLE_CLIENT_SECRET=your value
+EMAIL_USER=your value
+EMAIL_PASSWORD=your value
+CLOUDINARY_URL=your value
+QSTASH_URL=your value
+QSTASH_TOKEN=your value
+QSTASH_CURRENT_SIGNING_KEY=your value
+QSTASH_NEXT_SIGNING_KEYrl=your value
+
 ```
 
 Never commit `.env` or production secrets to GitHub.
