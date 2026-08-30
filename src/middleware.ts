@@ -25,7 +25,8 @@ export default middleware(async (request) => {
   }
 
   if (isAdminRoute) {
-    if (!session?.user?.email) {
+    console.log (session?.user)
+      if (!session?.user?.email) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
