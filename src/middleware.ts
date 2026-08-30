@@ -13,9 +13,7 @@ export default middleware(async (request) => {
   const isAuthRoute = authRoutes.some((route) =>
     path.startsWith(route)
   );
-  const isAdminRoute = path.startsWith("/admin");
-
-
+  
   if (isAuthRoute) {
     if (session?.user?.email) {
       return NextResponse.redirect(new URL("/", request.url));
@@ -24,18 +22,7 @@ export default middleware(async (request) => {
     return NextResponse.next();
   }
 
-  if (isAdminRoute) {
-    console.log (session?.user)
-      if (!session?.user?.email) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-
-    if (!session.user.isAdmin) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-
-    return NextResponse.next();
-  }
+  
 
   if (!session?.user?.email) {
     const loginUrl = new URL("/login", request.url);
