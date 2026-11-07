@@ -1,3 +1,5 @@
+
+Test
 # Blocksy News
 
 A full-stack news and blogging platform built with **Next.js** and **TypeScript** — a training project to practice production-style patterns: auth, caching, background jobs, and performance optimization.
